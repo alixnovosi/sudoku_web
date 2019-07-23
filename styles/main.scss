@@ -1,0 +1,134 @@
+$cell_size: 34px;
+
+.sudokuSection button {
+    box-sizing: content-box;
+    cursor: pointer;
+    display: block;
+}
+
+button.activeSquare {
+    background-color: #aabbaa;
+}
+
+.buttonGrid {
+    margin: 1em;
+    margin-right: 1em;
+
+    button {
+        border: 1px solid #000011;
+        border-radius: 10px;
+        font-size: 24px;
+        height: 2*$cell_size;
+        width: 2*$cell_size;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+.sudokuSection button:focus {
+    outline: 1px dashed #000011;
+}
+
+.modeSelect {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.modeSelect input[type="radio"] {
+    display: none;
+}
+
+.modeSelect label {
+    background-color: #ffffff;
+    border-radius: 10px;
+    cursor: pointer;
+    float: left;
+    margin: 10px;
+    padding: 1em;
+    text-align: center;
+    vertical-align: middle;
+    width: 10em;
+}
+
+.modeSelect input[type="radio"]:checked+label {
+    background-color: #555577;
+    color: #ddddff;
+}
+
+.sudokuBoard, .sudokuInfo, .sudokuRow {
+    display: flex;
+}
+
+.sudokuBoard {
+    background-color: #444455;
+    flex-direction: column;
+    height: 25em;
+    list-style: none;
+    margin: 0;
+    margin-bottom: 0;
+    padding: 2em;
+    padding-bottom: 0;
+
+    ul {
+        padding-bottom: 0;
+        padding-left: 0;
+    }
+}
+
+.sudokuRow {
+    flex-direction: row;
+    list-style: none;
+    margin-bottom: 5px;
+}
+
+.sudokuSection {
+    align-items: center;
+    background-color: #9999aa;
+    display: flex;
+    justify-content: space-around;
+    min-height: 500px;
+    min-width: 800px;
+}
+
+.sudokuSquare, .defaultFilledSquare {
+    border: none;
+    font-size: 24px;
+    height: $cell_size;
+    line-height: $cell_size;
+    margin: 0;
+    margin-right: 5px;
+    padding: 0;
+    width: $cell_size;
+    text-align: center;
+}
+
+.paddingRow {
+    margin-bottom: 10px;
+}
+
+.paddingSquare {
+    margin-right: 10px;
+}
+
+.sudokuBoard, .sudokuInfo {
+    border-radius: 10px;
+}
+
+.sudokuInfo {
+    align-items: center;
+    background-color: #ddddff;
+    flex-direction: column;
+    height: 30em;
+    justify-content: space-around;
+    margin: 1em;
+    padding: 1em;
+}
+
+.sudokuSquare {
+    background-color: #ffffff;
+}
+
+.defaultFilledSquare {
+    background-color: #ccccdd;
+}

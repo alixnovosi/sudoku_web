@@ -1,11 +1,20 @@
 {
     "compilerOptions": {
-        "outDir": "./built/",
-        "sourceMap": true,
-        "strict": true,
-        "noImplicitReturns": true,
+        "alwaysStrict": true,
+        "downlevelIteration": true,
+        "forceConsistentCasingInFileNames": true,
         "module": "es2015",
         "moduleResolution": "node",
+        "newLine": "lf",
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "outDir": "./built/",
+        "plugins": [
+                { "name": "@fimbul/mithotyn" }
+        ],
+        "sourceMap": true,
+        "strict": true,
         "target": "es5"
     },
     "include": [
