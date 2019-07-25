@@ -12,7 +12,7 @@
       <table class="buttonGrid">
         <tr v-for="row in minigrid_size" :key="row">
           <td v-for="col in minigrid_size" :key="col">
-            <button onClick="pressButton(row, col)">
+            <button v-on:click="onNumberClick(row, col)">
               {{ getNumberValue(row, col) }}
             </button>
           </td>
@@ -65,16 +65,15 @@ export default class SudokuGrid extends Vue {
             for (let c = 0; c < this.initialSquareData[r].length; c++) {
                 let value = this.initialSquareData[r][c].value;
                 let hint = this.initialSquareData[r][c].hint;
-                let newSquare = 
-                  new SudokuSquare({
-                    propsData: {
-                      value: value,
-                      hint: hint,
-                      classes: this.getSquareClass(hint, r, c),
-                    }
-                  });
-                newRow.push(newSquare);
-              console.log(newSquare);
+                newRow.push(
+                    new SudokuSquare({
+                        propsData: {
+                            value: value,
+                            hint: hint,
+                            classes: this.getSquareClass(hint, r, c),
+                        }
+                    })
+                );
             }
             this.squareData.push(newRow);
         }
@@ -84,11 +83,7 @@ export default class SudokuGrid extends Vue {
 
     // set class for sudoku square.
     // used to set visibility, spacing.
-    public getSquareClass(
-      hint: boolean,
-      row: number,
-      col: number,
-    ): Array<string> {
+    public getSquareClass(hint: boolean, row: number, col: number): Array<string> {
         let classes = ["sudokuSquare"];
         if (hint) {
             classes.push("defaultFilledSquare");
@@ -128,12 +123,27 @@ export default class SudokuGrid extends Vue {
 
     public onNumberClick(row: number, col: number): void {
         let value: number = this.getNumberValue(row, col);
-        this.squareData[row][col].guess = value;
+        this.squareData[this.activeRow][this.activeCol].guess = value;
     }
 
     public onBoardClick(row: number, col: number): void {
+        // update old cell's activeClass.
+        let oldActiveRow = this.activeRow;
+        let oldActiveCol = this.activeCol;
+
         this.activeRow = row;
         this.activeCol = col;
+
+        let oldActiveSquare = this.squareData[oldActiveRow][oldActiveCol];
+
+        // just in case.
+        if (!oldActiveSquare.hint) {
+            oldActiveSquare.classes = this.getSquareClass(false, oldActiveRow, oldActiveCol);
+        }
+
+        // and new.
+        let newActiveSquare = this.squareData[row][col];
+        newActiveSquare.classes = this.getSquareClass(false, row, col);
     }
 }
 </script>
