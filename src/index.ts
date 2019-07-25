@@ -127,7 +127,9 @@ new Vue({
     },
     el: "#app",
     template: `
+    <div id="app">
         <sudoku-grid :initialSquareData="squareData" ></sudoku-grid>
+    </div>
     `,
     components: {
         SudokuGrid

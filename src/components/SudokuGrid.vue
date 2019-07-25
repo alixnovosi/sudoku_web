@@ -2,18 +2,18 @@
   <div class="sudokuSection">
     <div class="sudokuInfo">
       <form class="modeSelect">
-        <input type="radio" id="solveMode" name="editMode" v-model="this.editMode" value="solve">
+        <input type="radio" id="solveMode" name="editMode" v-model="editMode" v-bind:value="true">
         <label for="solveMode"> Solve Square </label>
 
-        <input type="radio" id="hintMode" name="editMode" v-model="this.editMode" value="hint">
+        <input type="radio" id="hintMode" name="editMode" v-model="editMode" v-bind:value="false">
         <label for="hintMode"> Set Square Hints </label>
       </form>
 
       <table class="buttonGrid">
-        <tr v-for="row in minigrid_size" :key="row">
-          <td v-for="col in minigrid_size" :key="col">
-            <button v-on:click="onNumberClick(row, col)">
-              {{ getNumberValue(row, col) }}
+        <tr v-for="(buttonRow, r) in numpadButtons" :key="r">
+          <td v-for="(button, c) in buttonRow" :key="c">
+            <button v-bind:class="button.getClasses()" v-on:click="onNumberClick(button.value, r, c)">
+              {{ button.value }}
             </button>
           </td>
         </tr>
@@ -21,13 +21,15 @@
     </div>
 
     <ul class="sudokuBoard">
-      <li v-for="(squares, row) in squareData">
-        <ul v-bind:class="getRowClass(row)">
-          <li v-for="(square, col) in squares">
-            <div v-if="square.hint" v-bind:class="square.classes">
+      <li v-for="(squares, r) in squareData">
+        <ul v-bind:class="getRowClass(r)">
+          <li v-for="(square, c) in squares">
+            <div v-if="square.hint" v-bind:class="square.getClasses(minigridSize, c)">
               {{ square.value }}
             </div>
-            <button v-else v-bind:class="square.classes" v-on:click="onBoardClick(row, col)">
+            <button
+              v-else v-bind:class="square.getClasses(minigridSize, c)"
+              v-on:click="onBoardClick(r, c)">
               {{ square.guess }}
             </button>
           </li>
@@ -41,6 +43,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
+import NumpadButton from "./NumpadButton.vue";
 import SudokuSquare from "./SudokuSquare.vue";
 
 @Component
@@ -49,14 +52,23 @@ export default class SudokuGrid extends Vue {
     initialSquareData!: Array<Array<any>>;
 
     // TODO where do constants go
-    private minigrid_size: number = 3;
+    private minigridSize: number = 3;
 
-    public editMode: Boolean = false;
+    public editMode: string = "true";
 
-    public activeCol: number = 0;
-    public activeRow: number = 0;
+    public isSolveMode = () => {
+        return this.editMode === "true";
+    };
+
+    public activeCol: number = -1;
+    public activeRow: number = -1;
+
+    public activeNumpadButtonRow: number = -1;
+    public activeNumpadButtonCol: number = -1;
 
     public squareData: Array<Array<SudokuSquare>> = [];
+
+    public numpadButtons: Array<Array<NumpadButton>> = [];
 
     mounted() {
         for (let r = 0; r < this.initialSquareData.length; r++) {
@@ -70,35 +82,33 @@ export default class SudokuGrid extends Vue {
                         propsData: {
                             value: value,
                             hint: hint,
-                            classes: this.getSquareClass(hint, r, c),
                         }
                     })
                 );
             }
             this.squareData.push(newRow);
         }
+
+        for (let r = 0; r < this.minigridSize; r++) {
+
+            let newRow: NumpadButton[] = [];
+            for (let c = 0; c < this.minigridSize; c++) {
+                let value = (r * this.minigridSize) + (c + 1);
+                newRow.push(
+                    new NumpadButton({
+                        propsData: {
+                            value: value,
+                            isActive: false,
+                        }
+                    })
+                );
+            }
+
+            this.numpadButtons.push(newRow);
+        }
     }
 
     // METHODS
-
-    // set class for sudoku square.
-    // used to set visibility, spacing.
-    public getSquareClass(hint: boolean, row: number, col: number): Array<string> {
-        let classes = ["sudokuSquare"];
-        if (hint) {
-            classes.push("defaultFilledSquare");
-        }
-
-        if ((col+1) % this.minigrid_size === 0 && col < 8 && col > 0) {
-            classes.push("paddingSquare");
-        }
-
-        if (row === this.activeRow && col === this.activeCol) {
-            classes.push("activeSquare");
-        }
-
-        return classes;
-    }
 
     // the related row method just does spacing.
     public getRowClass(row: number): Array<string> {
@@ -110,40 +120,104 @@ export default class SudokuGrid extends Vue {
         // number with an integer square root so the subgrids work,
         // and then you have to change the digit entry, and figure out how to put in two-digit
         // numbers, and it just seems like a bit much.
-        if ((row+1) % this.minigrid_size == 0 && row < 8 && row > 0) {
+        if ((row+1) % this.minigridSize == 0 && row < 8 && row > 0) {
             classes.push("paddingRow");
         }
 
         return classes;
     }
 
-    public getNumberValue(row: number, col: number): number {
-        return ((row-1) * this.minigrid_size) + col;
+    public onNumberClick(value: number, row: number, col: number): void {
+        // do nothing if there is not a valid active square.
+        if (this.activeRow === -1 || this.activeCol === -1) {
+            return;
+        }
+
+        let oldActiveRow = this.activeNumpadButtonRow;
+        let oldActiveCol = this.activeNumpadButtonCol;
+
+        // erase old numpad before setting class on new one.
+        // check that oldActiveRow/Col are valid and that they aren't BOTH the same as the current coords.
+        // (which would mean we're clicking the same button over and over and don't need to reset like this).
+        if (oldActiveRow !== -1 && oldActiveCol !== -1 && (oldActiveRow !== row || oldActiveCol !== col)) {
+            let oldActiveNumpad = this.numpadButtons[oldActiveRow][oldActiveCol];
+            oldActiveNumpad.isActive = false;
+        }
+
+        this.activeNumpadButtonRow = row;
+        this.activeNumpadButtonCol = col;
+
+        let activeCell = this.squareData[this.activeRow][this.activeCol];
+        activeCell.updateValues(this.isSolveMode(), value);
+        activeCell = this.squareData[this.activeRow][this.activeCol];
+
+        let activeNumpad = this.numpadButtons[row][col];
+        activeNumpad.updateIsActive(this.isSolveMode(), activeCell.guess, activeCell.notes);
     }
 
-    public onNumberClick(row: number, col: number): void {
-        let value: number = this.getNumberValue(row, col);
-        this.squareData[this.activeRow][this.activeCol].guess = value;
-    }
-
+    // TODO this and the above need proper mode switching between solve and hint modes.
+    // try to keep it not gross?
     public onBoardClick(row: number, col: number): void {
         // update old cell's activeClass.
         let oldActiveRow = this.activeRow;
         let oldActiveCol = this.activeCol;
-
         this.activeRow = row;
         this.activeCol = col;
 
-        let oldActiveSquare = this.squareData[oldActiveRow][oldActiveCol];
+        // check it's a valid oldActiveRow/Col.
+        if (oldActiveRow !== -1 && oldActiveCol !== -1) {
+            let oldActiveSquare = this.squareData[oldActiveRow][oldActiveCol];
+            oldActiveSquare.isActive = false;
 
-        // just in case.
-        if (!oldActiveSquare.hint) {
-            oldActiveSquare.classes = this.getSquareClass(false, oldActiveRow, oldActiveCol);
+            // erase the last active numpad buttons.
+            let coords = this.getCoordsToToggle(oldActiveRow, oldActiveCol);
+            for (let coord of coords) {
+                let oldActiveNumpad = this.numpadButtons[coord[0]][coord[1]];
+                oldActiveNumpad.isActive = false;
+            }
         }
 
         // and new.
         let newActiveSquare = this.squareData[row][col];
-        newActiveSquare.classes = this.getSquareClass(false, row, col);
+        newActiveSquare.isActive = true;
+
+        // and numpad toggle
+        let coords = this.getCoordsToToggle(row, col);
+        for (let coord of coords) {
+            let oldActiveNumpad = this.numpadButtons[coord[0]][coord[1]];
+            oldActiveNumpad.isActive = true;
+        }
+    }
+
+    // given a set of coordinates to a board cell,
+    // return the list of numpad coordinates that need to be toggled based on the current mode.
+    public getCoordsToToggle(row: number, col: number): Array<[number, number]> {
+        let gridSquare = this.squareData[row][col];
+
+        let digits: number[] = [];
+        if (this.isSolveMode()) {
+            if (gridSquare.guess !== null) {
+                digits = [gridSquare.guess];
+            }
+        } else {
+            for (let i = 0; i < gridSquare.notes.length; i++) {
+                if (gridSquare.notes[i]) {
+                    digits.push(i);
+                }
+            }
+        }
+
+        let coords: [number, number][] = [];
+        for (let digit of digits) {
+            let coord: [number, number] = [
+              Math.floor((digit-1) / this.minigridSize),
+              (digit-1) % this.minigridSize
+            ];
+
+            coords.push(coord);
+        }
+
+        return coords;
     }
 }
 </script>

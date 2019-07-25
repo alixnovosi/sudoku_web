@@ -23,10 +23,14 @@ button.activeSquare {
         margin: 0;
         padding: 0;
     }
+
+    .activeNumpadButton {
+        background-color: #CCCCDD;
+    }
 }
 
 .sudokuSection button:focus {
-    outline: 1px dashed #000011;
+    outline: 2px dotted #000011;
 }
 
 .modeSelect {
