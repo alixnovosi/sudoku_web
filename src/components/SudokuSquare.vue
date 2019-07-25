@@ -1,39 +1,32 @@
-<template>
-  <div v-if="square.hint" v-bind:class="getSquareClass(square, row, col)">
-    {{ square.value }}
-  </div>
-  <button
-      v-if="!square.hint"
-      v-bind:class="getSquareClass(square, row, col)"
-      v-on:click="onBoardClick(row, col)"
-      >
-      {{ square.answer }}
-  </button>
-</template>
-
 <script lang="ts">
 import Vue from "vue";
+import { Component, Prop } from "vue-property-decorator";
 
-export default Vue.extend({
-    props: {
-        value: Number,
-        hint: Boolean,
-        guess: Number|null,
-        notes: Array[Number],
-    },
-    data() {
+@Component
+export default class SudokuSquare extends Vue {
+    // true value and whether it's shown initially.
+    @Prop({default: 0})
+    public value!: number;
+
+    @Prop({default: false})
+    public hint!: boolean;
+
+    @Prop({default: () => []})
+    public classes!: string[];
+
+    // player data.
+    public guess: number|null = null;
+    public notes: number[] = [];
+
+    public toJSON() {
         return {
-            value: 0,
-            hint: false,
-            guess: null,
-            notes: [],
-        }
-    },
-    methods: { },
-    computed: { },
-});
+          "guess": this.guess,
+          "notes": this.notes,
+        };
+    }
+}
 </script>
 
 <style lang="scss" scoped>
-  @import "../../styles/main.scss"
+    @import "../../styles/main.scss"
 </style>

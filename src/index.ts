@@ -1,7 +1,7 @@
 import Vue from "vue";
 import SudokuGrid from "./components/SudokuGrid.vue";
 
-let sd = [
+let sd: Object[][] = [
     [
         { "value": 2, "hint": true },
         { "value": 4, "hint": true },
@@ -122,14 +122,13 @@ let sd = [
 ];
 
 new Vue({
-    el: "#app",
-    template: `
-    <sudoku-grid :squareData="squareData" :editMode="editMode"/>
-    `,
     data: {
         squareData: sd,
-        editMode: "solve"
     },
+    el: "#app",
+    template: `
+        <sudoku-grid :initialSquareData="squareData" ></sudoku-grid>
+    `,
     components: {
         SudokuGrid
     }
