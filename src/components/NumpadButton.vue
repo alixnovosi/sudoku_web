@@ -14,7 +14,7 @@ export default class NumpadButton extends Vue {
     @Prop({default: () => []})
     public classes!: string[];
 
-    public updateIsActive(isSolveMode: boolean, cellGuess?: number|null, cellNotes?: boolean[]) {
+    public updateIsActive(isSolveMode: boolean, cellGuess?: number|null, cellNotes?: boolean[][]) {
         // for solve mode, just flip on provided cell value.
         if (isSolveMode) {
             if (cellGuess === null) {
@@ -25,7 +25,9 @@ export default class NumpadButton extends Vue {
 
         // and for not solve mode (hint mode, more concisely), check against notes.
         } else if (!isSolveMode && cellNotes) {
-            this.isActive = cellNotes[this.value-1];
+            let row = Math.floor((this.value - 1) / 3);
+            let col = (this.value - 1) % 3;
+            this.isActive = cellNotes[row][col];
         }
     }
 

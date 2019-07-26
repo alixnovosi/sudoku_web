@@ -1,13 +1,13 @@
-$cell_size: 34px;
+$cell_size: 48px;
+
+.activeSquare {
+    background-color: #aabbaa;
+}
 
 .sudokuSection button {
     box-sizing: content-box;
     cursor: pointer;
     display: block;
-}
-
-button.activeSquare {
-    background-color: #aabbaa;
 }
 
 .buttonGrid {
@@ -18,14 +18,14 @@ button.activeSquare {
         border: 1px solid #000011;
         border-radius: 10px;
         font-size: 24px;
-        height: 2*$cell_size;
-        width: 2*$cell_size;
+        height: 1.5 * $cell_size;
+        width: 1.5 * $cell_size;
         margin: 0;
         padding: 0;
     }
 
     .activeNumpadButton {
-        background-color: #CCCCDD;
+        background-color: #ccccdd;
     }
 }
 
@@ -67,12 +67,8 @@ button.activeSquare {
 .sudokuBoard {
     background-color: #444455;
     flex-direction: column;
-    height: 25em;
     list-style: none;
-    margin: 0;
-    margin-bottom: 0;
     padding: 2em;
-    padding-bottom: 0;
 
     ul {
         padding-bottom: 0;
@@ -93,6 +89,36 @@ button.activeSquare {
     justify-content: space-around;
     min-height: 500px;
     min-width: 800px;
+}
+
+.noteSquare {
+    border: none;
+    cursor: pointer;
+    font-size: 10px;
+    height: $cell_size;
+    margin: 0;
+    margin-right: 5px;
+    padding: 0;
+    width: $cell_size;
+    text-align: center;
+
+    table {
+        margin: 0 auto;
+    }
+
+    tr {
+        margin: 0;
+        padding: 0;
+    }
+
+    td {
+        height: 8px;
+        width: 5px;
+    }
+}
+
+.activeNote {
+    color: #000011;
 }
 
 .sudokuSquare, .defaultFilledSquare {
@@ -129,7 +155,7 @@ button.activeSquare {
     padding: 1em;
 }
 
-.sudokuSquare {
+.inactiveSquare {
     background-color: #ffffff;
 }
 
