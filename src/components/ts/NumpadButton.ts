@@ -1,4 +1,3 @@
-<script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
@@ -7,12 +6,16 @@ export default class NumpadButton extends Vue {
     @Prop({default: 0})
     public value!: number;
 
-    @Prop({default: false})
-    public isActive!: boolean;
+    public isActive: boolean = false;
 
     // CSS classes for the button, for display later.
-    @Prop({default: () => []})
-    public classes!: string[];
+    public get classes(): string[] {
+        if (this.isActive) {
+            return ["activeNumpadButton"];
+        } else {
+            return [];
+        }
+    }
 
     public updateIsActive(isSolveMode: boolean, cellGuess?: number|null, cellNotes?: boolean[][]) {
         // for solve mode, just flip on provided cell value.
@@ -30,13 +33,4 @@ export default class NumpadButton extends Vue {
             this.isActive = cellNotes[row][col];
         }
     }
-
-    public getClasses(): string[] {
-        if (this.isActive) {
-            return ["activeNumpadButton"];
-        } else {
-            return [];
-        }
-    }
 }
-</script>

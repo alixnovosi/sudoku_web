@@ -60,7 +60,7 @@ $cell_size: 48px;
     color: #ddddff;
 }
 
-.sudokuBoard, .sudokuInfo, .sudokuRow {
+.sudokuBoard, .sudokuInput .sudokuRow {
     display: flex;
 }
 
@@ -148,11 +148,11 @@ $cell_size: 48px;
     margin-right: 10px;
 }
 
-.sudokuBoard, .sudokuInfo {
+.sudokuBoard, .sudokuInput {
     border-radius: 10px;
 }
 
-.sudokuInfo {
+.sudokuInput {
     align-items: center;
     background-color: #ddddff;
     flex-direction: column;

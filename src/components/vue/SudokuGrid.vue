@@ -1,0 +1,43 @@
+<template>
+  <ul class="sudokuBoard">
+    <li v-for="(squares, r) in squareData">
+      <ul v-bind:class="getRowClass(r)">
+        <li v-for="(square, c) in squares">
+          <div v-if="square.hint" v-bind:class="square.getClasses(isSolveMode, minigridSize, c)">
+            {{ square.value }}
+          </div>
+
+          <button
+            v-else-if="isSolveMode"
+            v-bind:class="square.getClasses(isSolveMode, minigridSize, c)"
+            v-on:click="onBoardClick(r, c)">
+            {{ square.guess }}
+          </button>
+
+          <div
+            v-else
+            v-bind:class="square.getClasses(isSolveMode, minigridSize, c)"
+            v-on:click="onBoardClick(r, c)"
+            >
+            <table class="noteGrid">
+              <tr v-for="(noteRow, r) in square.notes" :key="r">
+                <td
+                  v-for="(note, c) in noteRow"
+                  v-bind:class="square.getNoteClasses(r, c)"
+                  :key="c">
+                    {{ square.getNote(r, c) }}
+                </td>
+              </tr>
+            </table>
+          </div>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</template>
+
+<script lang="ts" src="./SudokuGrid.ts"></script>
+
+<style lang="scss" scoped>
+    @import "../../styles/main.scss"
+</style>

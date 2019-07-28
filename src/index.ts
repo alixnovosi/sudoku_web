@@ -1,5 +1,5 @@
 import Vue from "vue";
-import SudokuGrid from "./components/SudokuGrid.vue";
+import SudokuGame from "./components/vue/SudokuGame.vue";
 
 let sd: Object[][] = [
     [
@@ -128,10 +128,10 @@ new Vue({
     el: "#app",
     template: `
     <div id="app">
-        <sudoku-grid :initialSquareData="squareData" ></sudoku-grid>
+      <sudoku-game :initialSquareData="squareData"></sudoku-game>
     </div>
     `,
     components: {
-        SudokuGrid
+        SudokuGame
     }
 }).$mount("#app");
