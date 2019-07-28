@@ -4,7 +4,13 @@ import { Component, Prop, Watch } from "vue-property-decorator";
 import NumpadButton from "./NumpadButton";
 import SudokuState from "./SudokuState";
 
-@Component
+import WithRender from "../html/SudokuInput.html";
+
+@WithRender
+@Component({
+    components: {
+    }
+})
 export default class SudokuInput extends Vue {
     // PROPS AND DATA MEMBERS.
 

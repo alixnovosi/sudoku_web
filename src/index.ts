@@ -1,5 +1,7 @@
 import Vue from "vue";
-import SudokuGame from "./components/vue/SudokuGame.vue";
+import SudokuGame from "./components/ts/SudokuGame";
+
+import "../styles/main.scss";
 
 let sd: Object[][] = [
     [

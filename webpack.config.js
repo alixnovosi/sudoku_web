@@ -40,6 +40,11 @@ module.exports = {
                 'css-loader',
                 'sass-loader'
             ]
+        },
+        {
+            test: /.html$/,
+            loader: "vue-template-loader",
+            exclude: /index.html/
         }
         ]
     },

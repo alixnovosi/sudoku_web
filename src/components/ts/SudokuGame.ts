@@ -6,7 +6,15 @@ import SudokuGrid from "./SudokuGrid";
 import SudokuInput from "./SudokuInput";
 import SudokuState from "./SudokuState";
 
+import WithRender from "../html/SudokuGame.html";
+
+@WithRender
 @Component({
+    components: {
+        "sudoku-input": SudokuInput,
+        "sudoku-grid": SudokuGrid,
+        "sudoku-checker": SudokuChecker,
+    }
 })
 export default class SudokuGame extends Vue {
     @Prop({default: []})
@@ -21,16 +29,6 @@ export default class SudokuGame extends Vue {
             minigridSize: this.minigridSize,
         },
     });
-
-    public components: object = {
-        "sudoku-checker": SudokuChecker,
-        "sudoku-grid": SudokuGrid,
-        "sudoku-input": new SudokuInput({
-            propsData: {
-                state: this.state,
-            },
-        })
-    };
 
     public sudokuGrid: SudokuGrid = new SudokuGrid({
         propsData: {

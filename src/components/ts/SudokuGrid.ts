@@ -4,7 +4,14 @@ import { Component, Prop } from "vue-property-decorator";
 import SudokuSquare from "./SudokuSquare";
 import SudokuState from "./SudokuState";
 
-@Component
+import WithRender from "../html/SudokuGrid.html";
+
+import "../../../styles/main.scss";
+
+@WithRender
+@Component({
+    components: { }
+})
 export default class SudokuGrid extends Vue {
     // PROPS AND DATA MEMBERS
     @Prop()
