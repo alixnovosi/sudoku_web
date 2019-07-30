@@ -18,7 +18,7 @@ import WithRender from "../html/SudokuGame.html";
 })
 export default class SudokuGame extends Vue {
     @Prop({default: []})
-    initialSquareData!: Array<Array<any>>;
+    initialSquareData!: Object[][];
 
     // TODO where do constants go
     private minigridSize: number = 3;
@@ -27,19 +27,6 @@ export default class SudokuGame extends Vue {
     public state: SudokuState = new SudokuState({
         propsData: {
             minigridSize: this.minigridSize,
-        },
-    });
-
-    public sudokuGrid: SudokuGrid = new SudokuGrid({
-        propsData: {
-            state: this.state,
-            initialSquareData: this.initialSquareData,
-        },
-    });
-
-    public sudokuChecker: SudokuChecker = new SudokuChecker({
-        propsData: {
-            state: this.state,
         },
     });
 

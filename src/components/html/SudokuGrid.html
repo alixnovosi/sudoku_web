@@ -1,37 +1,36 @@
-<ul class="sudokuBoard">
-  <li v-for="(squares, r) in squareData">
-    <ul v-bind:class="getRowClass(r)">
-      <li v-for="(square, c) in squares">
-        <div
-          v-if="square.hint"
-          v-bind:class="square.getClasses(state.isGuessMode, state.minigridSize, c)">
-          {{ square.value }}
-        </div>
+<div class="sudokuGrid">
+  <ul>
+    <li v-for="(squares, r) in squareData">
+      <ul v-bind:class="getRowClass(r)">
+        <li v-for="(square, c) in squares">
+          <div
+            v-if="square.isHint"
+            v-bind:class="square.getClasses()">
+            {{ square.value }}
+          </div>
 
-        <button
-          v-else-if="state.isGuessMode"
-          v-bind:class="square.getClasses(state.isGuessMode, state.minigridSize, c)"
-          v-on:click="state.onBoardClick(r, c)">
-          {{ square.guess }}
-        </button>
+          <button
+            v-else-if="square.isGuessMode"
+            v-bind:class="square.getClasses()"
+            v-on:click="state.onBoardClick(r, c)">
+            {{ square.guess }}
+          </button>
 
-        <div
-          v-else
-          v-bind:class="square.getClasses(state.isGuessMode, state.minigridSize, c)"
-          v-on:click="state.onBoardClick(r, c)"
-          >
-          <table class="noteGrid">
-            <tr v-for="(noteRow, r) in square.notes" :key="r">
-              <td
-                v-for="(note, c) in noteRow"
-                v-bind:class="square.getNoteClasses(r, c)"
-                :key="c">
-                  {{ square.getNote(r, c) }}
-              </td>
-            </tr>
-          </table>
-        </div>
-      </li>
-    </ul>
-  </li>
-</ul>
+          <div
+            v-else
+            v-bind:class="square.getClasses()"
+            v-on:click="state.onBoardClick(r, c)"
+            >
+            <table class="noteGrid">
+              <tr v-for="(noteRow, nr) in square.notes">
+                <td v-for="(note, nc) in noteRow" v-bind:class="square.getNoteClasses(nr, nc)" :key="nc">
+                  {{ square.getNote(nr, nc) }}
+                </td>
+              </tr>
+            </table>
+          </div>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>

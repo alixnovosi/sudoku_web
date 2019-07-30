@@ -8,10 +8,20 @@ export default class SudokuSquare extends Vue {
     public value!: number;
 
     @Prop({default: false})
-    public hint!: boolean;
+    public isHint!: boolean;
 
+    // grid position
+    @Prop()
+    public row!: number;
+    @Prop()
+    public column!: number;
+
+    // minigrid size, for doing some math.
     @Prop()
     public minigridSize!: number;
+
+    @Prop()
+    public isGuessMode!: boolean;
 
     // player data.
     public guess: number|null = null;
@@ -20,6 +30,9 @@ export default class SudokuSquare extends Vue {
     // other
     public isActive: boolean = false;
 
+    // parameters: none.
+    // returns: 2D array of notes for this square.
+    // results: none.
     public initializeNotes(): boolean[][] {
         let notes: boolean[][]  = []
         for (let r = 0; r < this.minigridSize; r++) {
@@ -42,32 +55,40 @@ export default class SudokuSquare extends Vue {
             } else {
                 this.guess = value;
             }
+
         } else {
             let row = Math.floor((value - 1) / 3);
             let col = (value - 1) % 3;
 
-            console.log("value " + value + " row " + row + " col " + col);
-            console.log(this.notes);
             this.notes[row][col] = !this.notes[row][col];
         }
     }
 
     // used to set visibility, spacing.
-    public getClasses(isSolveMode: boolean, minigridSize: number, col: number): Array<string> {
+    // parameters: none
+    // return: CSS classes for this square.
+    // result: none
+    public getClasses(): string[] {
         let classes = [];
 
-        if (!this.hint && isSolveMode) {
+        // mode switch - hint square (default), note square, or guess square (both user)?
+        if (this.isHint) {
+            classes.push("defaultFilledSquare");
+        } else if (!this.isHint && this.isGuessMode) {
             classes.push("sudokuSquare");
-        } else if (!this.hint && !isSolveMode) {
+        } else if (!this.isHint && !this.isGuessMode) {
             classes.push("noteSquare");
         }
 
-        if (this.hint) {
-            classes.push("defaultFilledSquare");
-        }
+        // padding squares are every square besides the last.
+        // spacing squares are every minigridSize and have extra horizontal padding.
+        if (this.column < 8 && this.column >= 0) {
 
-        if ((col+1) % minigridSize === 0 && col < 8 && col > 0) {
-            classes.push("paddingSquare");
+            if ((this.column+1) % this.minigridSize === 0) {
+                classes.push("spacerSquare");
+            } else {
+                classes.push("paddingSquare");
+            }
         }
 
         if (this.isActive) {
@@ -79,14 +100,24 @@ export default class SudokuSquare extends Vue {
         return classes;
     }
 
+    // parameters:
+    // row: row in note grid.
+    // col: column in note grid.
+    // returns: value of note given by row and column.
     public getNote(row: number, col: number) {
-        if (this.notes[row][col]) {
+        let noteIsSet = this.notes[row][col];
+        if (noteIsSet) {
             return (row * this.minigridSize) + col + 1;
         } else {
             return " ";
         }
     }
 
+    // parameters:
+    // row: row in note grid.
+    // col: column in note grid.
+    // returns: list of CSS classes to apply to the note in the html.
+    // result: none.
     public getNoteClasses(row: number, col: number) {
         let noteIsSet = this.notes[row][col];
         if (noteIsSet) {

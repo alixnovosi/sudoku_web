@@ -9,6 +9,7 @@ import WithRender from "../html/SudokuInput.html";
 @WithRender
 @Component({
     components: {
+        "numpad-button": NumpadButton,
     }
 })
 export default class SudokuInput extends Vue {
@@ -19,20 +20,24 @@ export default class SudokuInput extends Vue {
     state!: SudokuState;
 
     // numpad button inputs.
-    public numpadButtons: Array<Array<NumpadButton>> = [];
+    public numpadButtons: NumpadButton[][] = [];
 
     // WATCHERS
 
     // watch isGuessMode and update boolean isGuessMode appropriately.
-    // perform a fake click on the active square to toggle guesses/notes.
     @Watch("state.guessMode")
     public updateGuessMode() {
         this.state.isGuessMode = (this.state.guessMode === "true");
-        this.state.onBoardClick(this.state.activeSquareRow, this.state.activeSquareCol);
+
+        this.state.clearNumpadSquares();
     };
 
     // basically a constructor.
     mounted() {
+        // I don't think I should need this,
+        // but it forces an update and sets the radio buttons correctly.
+        this.state.guessMode = "true";
+
         for (let r = 0; r < this.state.minigridSize; r++) {
 
             let newRow: NumpadButton[] = [];
@@ -51,7 +56,9 @@ export default class SudokuInput extends Vue {
             this.numpadButtons.push(newRow);
         }
 
+        this.state.clearNumpadSquares = this.clearNumpadSquares;
         this.state.enableNumpadSquares = this.enableNumpadSquares;
+        this.state.onNumpadClick = this.onNumpadClick;
 
     }
 
@@ -93,7 +100,19 @@ export default class SudokuInput extends Vue {
             let activeNumpad = this.getNumpadButton(row, col);
 
             if (activeNumpad) {
-                activeNumpad.updateIsActive(this.state.isGuessMode, activeCell.guess, activeCell.notes);
+                activeNumpad.updateIsActive(
+                    this.state.isGuessMode,
+                    activeCell.guess,
+                    activeCell.notes,
+                );
+
+                let numpadRow = this.numpadButtons[row];
+                numpadRow[col] = activeNumpad;
+                Vue.set(
+                    this.numpadButtons,
+                    row,
+                    numpadRow,
+                )
             }
         }
     }
@@ -139,6 +158,15 @@ export default class SudokuInput extends Vue {
 
             if (oldActiveNumpad) {
                 oldActiveNumpad.isActive = false;
+
+                let numpadRow = this.numpadButtons[coord[0]];
+                numpadRow[coord[1]] = oldActiveNumpad;
+
+                Vue.set(
+                    this.numpadButtons,
+                    coord[0],
+                    numpadRow,
+                )
             }
         }
     }
@@ -159,6 +187,15 @@ export default class SudokuInput extends Vue {
             let numpadButton = this.getNumpadButton(coord[0], coord[1]);
             if (numpadButton) {
                 numpadButton.isActive = true;
+
+                let numpadRow = this.numpadButtons[coord[0]];
+                numpadRow[coord[1]] = numpadButton;
+
+                Vue.set(
+                    this.numpadButtons,
+                    coord[0],
+                    numpadRow,
+                )
             }
         }
     }

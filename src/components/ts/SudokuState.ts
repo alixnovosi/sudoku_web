@@ -29,6 +29,7 @@ export default class SudokuState extends Vue {
     public onBoardClick: (row: number, col: number) => void = () => {};
 
     // SudokuInput
-    clearNumpadSquares: () => void = () => {};
-    enableNumpadSquares: (digits: number[]) => void = () => {};
+    public clearNumpadSquares: () => void = () => {};
+    public enableNumpadSquares: (digits: number[]) => void = () => {};
+    public onNumpadClick: (value: number, row: number, col: number) => void = () => {};
 }

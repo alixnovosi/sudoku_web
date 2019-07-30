@@ -4,10 +4,18 @@ $cell_size: 48px;
     background-color: #aabbaa;
 }
 
+.defaultFilledSquare {
+    background-color: #ccccdd;
+}
+
 .sudokuSection button {
     box-sizing: content-box;
     cursor: pointer;
     display: block;
+}
+
+.sudokuSquare.inactiveSquare, .noteSquare.inactiveSquare {
+    background-color: #ffffff;
 }
 
 .buttonGrid {
@@ -60,17 +68,18 @@ $cell_size: 48px;
     color: #ddddff;
 }
 
-.sudokuBoard, .sudokuInput .sudokuRow {
+.sudokuGrid, .sudokuInput, .sudokuRow {
     display: flex;
 }
 
-.sudokuBoard {
+.sudokuGrid {
     background-color: #444455;
     flex-direction: column;
     list-style: none;
     padding: 2em;
 
     ul {
+        list-style: none;
         padding-bottom: 0;
         padding-left: 0;
     }
@@ -79,6 +88,9 @@ $cell_size: 48px;
 .sudokuRow {
     flex-direction: row;
     list-style: none;
+}
+
+.paddingRow {
     margin-bottom: 5px;
 }
 
@@ -92,28 +104,22 @@ $cell_size: 48px;
 }
 
 .noteSquare {
-    border: none;
     cursor: pointer;
     font-size: 9px;
-    height: $cell_size;
-    margin: 0;
-    margin-right: 5px;
-    padding: 0;
-    width: $cell_size;
-    text-align: center;
 
-    table {
+    table, tr {
         align-items: stretch;
         display: flex;
-        flex-direction: column;
         justify-content: space-around;
+    }
+
+    table {
+        flex-direction: column;
         padding: 5px;
     }
 
     tr {
-        align-items: stretch;
-        display: flex;
-        justify-content: space-around;
+        flex-direction: row;
         min-height: 12px;
         min-width: 100%;
     }
@@ -128,27 +134,33 @@ $cell_size: 48px;
     color: #000011;
 }
 
-.sudokuSquare, .defaultFilledSquare {
+.sudokuSquare, .defaultFilledSquare, .noteSquare {
     border: none;
-    font-size: 24px;
     height: $cell_size;
-    line-height: $cell_size;
     margin: 0;
-    margin-right: 5px;
     padding: 0;
     width: $cell_size;
     text-align: center;
 }
 
-.paddingRow {
-    margin-bottom: 10px;
+.sudokuSquare, .defaultFilledSquare {
+    font-size: 24px;
+    line-height: $cell_size;
 }
 
 .paddingSquare {
+    margin-right: 5px;
+}
+
+.spacerRow {
+    margin-bottom: 10px;
+}
+
+.spacerSquare {
     margin-right: 10px;
 }
 
-.sudokuBoard, .sudokuInput {
+.sudokuGrid, .sudokuInput {
     border-radius: 10px;
 }
 
@@ -160,12 +172,4 @@ $cell_size: 48px;
     justify-content: space-around;
     margin: 1em;
     padding: 1em;
-}
-
-.inactiveSquare {
-    background-color: #ffffff;
-}
-
-.defaultFilledSquare {
-    background-color: #ccccdd;
 }

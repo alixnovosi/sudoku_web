@@ -10,7 +10,7 @@
   <table class="buttonGrid">
     <tr v-for="(buttonRow, r) in numpadButtons" :key="r">
       <td v-for="(button, c) in buttonRow" :key="c">
-        <button v-bind:class="button.classes" v-on:click="state.onNumberClick(button.value, r, c)">
+        <button v-bind:class="button.classes" v-on:click="state.onNumpadClick(button.value, r, c)">
           {{ button.value }}
         </button>
       </td>
