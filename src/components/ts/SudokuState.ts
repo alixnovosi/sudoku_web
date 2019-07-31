@@ -6,6 +6,13 @@ import SudokuSquare from "./SudokuSquare";
 // shared state between subcomponents.
 @Component
 export default class SudokuState extends Vue {
+    // statics
+    static readonly SectionType = Object.freeze({
+        Row: "row",
+        Column: "column",
+        Subgrid: "subgrid",
+    });
+
     @Prop()
     public minigridSize!: number;
 
@@ -27,9 +34,15 @@ export default class SudokuState extends Vue {
     // SudokuGrid.
     public handleGridUpdate: (value: number) => SudokuSquare|null = () => new SudokuSquare();
     public onBoardClick: (row: number, col: number) => void = () => {};
+    public getGridSection: (section_type: string, index: number) => number[] = () => {return []};
+    public invalidateSection: (section_type: string, index: number) => void = () => {};
 
     // SudokuInput
     public clearNumpadSquares: () => void = () => {};
     public enableNumpadSquares: (digits: number[]) => void = () => {};
     public onNumpadClick: (value: number, row: number, col: number) => void = () => {};
+
+    // SudokuChecker
+    public checkBoard: () => void = () => {};
+    public resetBoardErrors: () => void = () => {};
 }

@@ -4,6 +4,7 @@
     "description": "web sudoku player",
     "main": "index.js",
     "dependencies": {
+        "vue": "^2.6.10",
         "vue-class-component": "^7.1.0",
         "vue-property-decorator": "^8.2.1"
     },
@@ -14,8 +15,6 @@
         "sass-loader": "^7.1.0",
         "ts-loader": "^6.0.4",
         "typescript": "^3.5.3",
-        "vue": "^2.6.10",
-        "vue-loader": "^15.7.1",
         "vue-template-compiler": "^2.6.10",
         "vue-template-loader": "^1.0.0",
         "webpack": "^4.36.1",
@@ -28,7 +27,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "github.com/alixnovosi/sudoku_web"
+        "url": "https://github.com/alixnovosi/sudoku_web"
     },
     "author": "Andrew Michaud",
     "license": "ISC"

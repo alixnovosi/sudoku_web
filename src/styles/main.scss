@@ -1,4 +1,5 @@
-$cell_size: 48px;
+$cell_size: 40px;
+$sudoku_background: #444455;
 
 .activeSquare {
     background-color: #aabbaa;
@@ -37,6 +38,18 @@ $cell_size: 48px;
     }
 }
 
+.sudokuChecker button {
+    background-color: #555577;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    color: #ddddff;
+    padding: 1em;
+
+    &:hover {
+        background-color: #666688;
+    }
+}
+
 .sudokuSection button:focus {
     outline: 2px dotted #000011;
 }
@@ -53,6 +66,7 @@ $cell_size: 48px;
 
 .modeSelect label {
     background-color: #ffffff;
+    border: 1px solid #000000;
     border-radius: 10px;
     cursor: pointer;
     float: left;
@@ -61,19 +75,28 @@ $cell_size: 48px;
     text-align: center;
     vertical-align: middle;
     width: 10em;
+
+    &:hover {
+        background-color: #ddddff;
+    }
 }
 
 .modeSelect input[type="radio"]:checked+label {
     background-color: #555577;
     color: #ddddff;
+    font-weight: bold;
+
+    &:hover {
+        background-color: #666688;
+    }
 }
 
-.sudokuGrid, .sudokuInput, .sudokuRow {
+.sudokuGrid, .sudokuInput, .sudokuChecker, .sudokuRow {
     display: flex;
 }
 
 .sudokuGrid {
-    background-color: #444455;
+    background-color: $sudoku_background;
     flex-direction: column;
     list-style: none;
     padding: 2em;
@@ -94,6 +117,385 @@ $cell_size: 48px;
     margin-bottom: 5px;
 }
 
+// I really am sorry about this.
+.sudokuSquare.errorSquare, .noteSquare.errorSquare, .defaultFilledSquare.errorSquare {
+    // confusing naming, but this is to offset left and right and up and down.
+    // horizontal negative is left, positive right.
+    // vertical negative is top, positive bottom.
+    $positive_border: 5px;
+    $negative_border: -5px;
+    $error_color: #ff5555;
+    border: none;
+
+    &.leftRowError {
+        box-shadow:
+            // erase:
+            // right
+            $positive_border 0 0 0 $sudoku_background,
+
+            // draw:
+            // top
+            // bottom
+            // left (implicit in overlap)
+            0 $negative_border 0 0 $error_color,
+            0 $positive_border 0 0 $error_color,
+
+            // extend:
+            // top
+            // bottom
+            // to:
+            // left
+            // right
+            $positive_border $negative_border 0 0 $error_color,
+            $negative_border $negative_border 0 0 $error_color,
+            $positive_border $positive_border 0 0 $error_color,
+            $negative_border $positive_border 0 0 $error_color;
+    }
+
+    &.centerRowError {
+        box-shadow:
+            // erase:
+            // right
+            // left
+            $positive_border 0 0 0 $sudoku_background,
+            $negative_border 0 0 0 $sudoku_background,
+
+            // draw:
+            // top
+            // left
+            0 $negative_border 0 0 $error_color,
+            0 $positive_border 0 0 $error_color,
+
+            // overlap:
+            // top
+            // bottom
+            // to:
+            // left
+            // right
+            $positive_border $negative_border 0 0 $error_color,
+            $negative_border $negative_border 0 0 $error_color,
+            $positive_border $positive_border 0 0 $error_color,
+            $negative_border $positive_border 0 0 $error_color;
+    }
+
+    &.rightRowError{
+        box-shadow:
+            // erase:
+            // left
+            $negative_border 0 0 0 $sudoku_background,
+
+            // draw:
+            // top
+            // bottom
+            // right (implicit in overlap)
+            0 $negative_border 0 0 $error_color,
+            0 $positive_border 0 0 $error_color,
+
+            // extend:
+            // top
+            // bottom
+            // to:
+            // left
+            // right
+            $positive_border $negative_border 0 0 $error_color,
+            $negative_border $negative_border 0 0 $error_color,
+            $positive_border $positive_border 0 0 $error_color,
+            $negative_border $positive_border 0 0 $error_color;
+    }
+
+    &.topColumnError {
+        box-shadow:
+            // erase:
+            // bottom
+            0 $positive_border 0 0 $sudoku_background,
+
+            // draw:
+            // left
+            // right
+            // top (implicit in overlap)
+            $negative_border 0 0 0 $error_color,
+            $positive_border 0 0 0 $error_color,
+
+            // extend:
+            // left
+            // right
+            // to:
+            // top
+            // bottom
+            $negative_border $negative_border 0 0 $error_color,
+            $negative_border $positive_border 0 0 $error_color,
+            $positive_border $negative_border 0 0 $error_color,
+            $positive_border $positive_border 0 0 $error_color;
+    }
+
+    &.middleColumnError {
+        box-shadow:
+            // erase:
+            // top
+            // bottom
+            0 $negative_border 0 0 $sudoku_background,
+            0 $positive_border 0 0 $sudoku_background,
+
+            // draw:
+            // left
+            // right
+            $negative_border 0 0 0 $error_color,
+            $positive_border 0 0 0 $error_color,
+
+            // extend:
+            // left
+            // right
+            // to:
+            // top
+            // bottom
+            $negative_border $negative_border 0 0 $error_color,
+            $negative_border $positive_border 0 0 $error_color,
+            $positive_border $negative_border 0 0 $error_color,
+            $positive_border $positive_border 0 0 $error_color;
+    }
+
+    &.bottomColumnError{
+        box-shadow:
+            // erase:
+            // top
+            0 $negative_border 0 0 $sudoku_background,
+
+            // draw:
+            // left
+            // right
+            $negative_border 0 0 0 $error_color,
+            $positive_border 0 0 0 $error_color,
+
+            // extend:
+            // left
+            // right
+            // to:
+            // top
+            // bottom
+            $negative_border $negative_border 0 0 $error_color,
+            $negative_border $positive_border 0 0 $error_color,
+            $positive_border $negative_border 0 0 $error_color,
+            $positive_border $positive_border 0 0 $error_color;
+    }
+
+    &.topLeftSubgridError{
+        box-shadow:
+            // erase:
+            // right
+            // bottom
+            $positive_border 0 0 0 $sudoku_background,
+            0 $positive_border 0 0 $sudoku_background,
+
+            // draw:
+            // left (implicit)
+            // top (implicit)
+
+            // extend:
+            // top
+            // left
+            // to:
+            // right
+            // left
+            // bottom
+            // top
+            $negative_border $negative_border 0 0 $error_color,
+            $positive_border $negative_border 0 0 $error_color,
+            $negative_border $positive_border 0 0 $error_color;
+    }
+
+    &.topCenterSubgridError{
+        box-shadow:
+            // erase:
+            // left
+            // right
+            // bottom
+            $negative_border 0 0 0 $sudoku_background,
+            $positive_border 0 0 0 $sudoku_background,
+            0 $positive_border 0 0 $sudoku_background,
+
+            // draw:
+            // top (implicit)
+
+            // extend:
+            // top
+            // to:
+            // left
+            // right
+            $negative_border $negative_border 0 0 $error_color,
+            $positive_border $negative_border 0 0 $error_color;
+    }
+
+    &.topRightSubgridError{
+        box-shadow:
+            // erase:
+            // left
+            // bottom
+            $negative_border 0 0 0 $sudoku_background,
+            0 $positive_border 0 0 $sudoku_background,
+
+            // draw:
+            // right (implicit)
+            // top (implicit)
+
+            // extend:
+            // top
+            // right
+            // to:
+            // right
+            // left
+            // bottom
+            // top
+            $negative_border $negative_border 0 0 $error_color,
+            $positive_border $negative_border 0 0 $error_color,
+            $positive_border $positive_border 0 0 $error_color;
+    }
+
+    &.middleLeftSubgridError{
+        box-shadow:
+            // erase:
+            // top
+            // bottom
+            // right
+            0 $negative_border 0 0 $sudoku_background,
+            0 $positive_border 0 0 $sudoku_background,
+            $positive_border 0 0 0 $sudoku_background,
+
+            // draw:
+            // left
+            $negative_border 0 0 0 $error_color,
+
+            // extend:
+            // left
+            // to:
+            // top
+            // bottom
+            $negative_border $negative_border 0 0 $error_color,
+            $negative_border $positive_border 0 0 $error_color;
+    }
+
+    &.middleCenterSubgridError{
+        box-shadow:
+            // erase:
+            // top
+            // bottom
+            // right
+            // left
+            0 $negative_border 0 0 $sudoku_background,
+            0 $positive_border 0 0 $sudoku_background,
+            $positive_border 0 0 0 $sudoku_background,
+            $negative_border 0 0 0 $sudoku_background,
+
+            // draw: none
+
+            // extend:
+            // top
+            // bottom
+            // to:
+            // left
+            // right
+            // for nice corners
+            $negative_border $negative_border 0 0 $error_color,
+            $positive_border $negative_border 0 0 $error_color,
+            $negative_border $positive_border 0 0 $error_color,
+            $positive_border $positive_border 0 0 $error_color;
+    }
+
+    &.middleRightSubgridError{
+        box-shadow:
+            // erase:
+            // top
+            // bottom
+            // left
+            0 $negative_border 0 0 $sudoku_background,
+            0 $positive_border 0 0 $sudoku_background,
+            $negative_border 0 0 0 $sudoku_background,
+
+            // draw:
+            // right
+            $positive_border 0 0 0 $error_color,
+
+            // extend:
+            // right
+            // to:
+            // top
+            // bottom
+            $positive_border $negative_border 0 0 $error_color,
+            $positive_border $positive_border 0 0 $error_color;
+    }
+
+    &.bottomLeftSubgridError{
+        box-shadow:
+            // erase:
+            // right
+            // top
+            $positive_border 0 0 0 $sudoku_background,
+            0 $negative_border 0 0 $sudoku_background,
+
+            // draw:
+            // left (implicit)
+            // bottom (implicit)
+
+            // extend:
+            // bottom
+            // left
+            // to:
+            // right
+            // left
+            // bottom
+            // top
+            $negative_border $positive_border 0 0 $error_color,
+            $positive_border $positive_border 0 0 $error_color,
+            $negative_border $negative_border 0 0 $error_color;
+    }
+
+    &.bottomCenterSubgridError{
+        box-shadow:
+            // erase:
+            // left
+            // right
+            // top
+            $negative_border 0 0 0 $sudoku_background,
+            $positive_border 0 0 0 $sudoku_background,
+            0 $negative_border 0 0 $sudoku_background,
+
+            // draw:
+            // bottom (implicit)
+
+            // extend:
+            // bottom
+            // to:
+            // left
+            // right
+            $negative_border $positive_border 0 0 $error_color,
+            $positive_border $positive_border 0 0 $error_color;
+    }
+
+    &.bottomRightSubgridError{
+        box-shadow:
+            // erase:
+            // left
+            // top
+            $negative_border 0 0 0 $sudoku_background,
+            0 $negative_border 0 0 $sudoku_background,
+
+            // draw:
+            // right (implicit)
+            // bottom (implicit)
+
+            // extend:
+            // bottom
+            // right
+            // to:
+            // right
+            // left
+            // bottom
+            // top
+            $negative_border $positive_border 0 0 $error_color,
+            $positive_border $positive_border 0 0 $error_color,
+            $positive_border $negative_border 0 0 $error_color;
+    }
+}
+
 .sudokuSection {
     align-items: center;
     background-color: #9999aa;
@@ -105,7 +507,7 @@ $cell_size: 48px;
 
 .noteSquare {
     cursor: pointer;
-    font-size: 9px;
+    font-size: 8.5px;
 
     table, tr {
         align-items: stretch;
@@ -115,17 +517,16 @@ $cell_size: 48px;
 
     table {
         flex-direction: column;
-        padding: 5px;
+        padding: 2px;
     }
 
     tr {
         flex-direction: row;
-        min-height: 12px;
         min-width: 100%;
     }
 
     td {
-        min-height: 12px;
+        min-height: 10px;
         min-width: 8px;
     }
 }
@@ -135,12 +536,15 @@ $cell_size: 48px;
 }
 
 .sudokuSquare, .defaultFilledSquare, .noteSquare {
-    border: none;
     height: $cell_size;
     margin: 0;
     padding: 0;
     width: $cell_size;
     text-align: center;
+}
+
+.noteSquare.validSquare, .sudokuSquare.validSquare {
+    border: none;
 }
 
 .sudokuSquare, .defaultFilledSquare {
@@ -160,11 +564,11 @@ $cell_size: 48px;
     margin-right: 10px;
 }
 
-.sudokuGrid, .sudokuInput {
+.sudokuGrid, .sudokuInput, .sudokuChecker {
     border-radius: 10px;
 }
 
-.sudokuInput {
+.sudokuChecker, .sudokuInput {
     align-items: center;
     background-color: #ddddff;
     flex-direction: column;

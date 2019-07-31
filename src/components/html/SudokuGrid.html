@@ -5,20 +5,20 @@
         <li v-for="(square, c) in squares">
           <div
             v-if="square.isHint"
-            v-bind:class="square.getClasses()">
+            v-bind:class="square.classes">
             {{ square.value }}
           </div>
 
           <button
             v-else-if="square.isGuessMode"
-            v-bind:class="square.getClasses()"
+            v-bind:class="square.classes"
             v-on:click="state.onBoardClick(r, c)">
             {{ square.guess }}
           </button>
 
           <div
             v-else
-            v-bind:class="square.getClasses()"
+            v-bind:class="square.classes"
             v-on:click="state.onBoardClick(r, c)"
             >
             <table class="noteGrid">

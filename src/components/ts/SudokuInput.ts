@@ -96,6 +96,7 @@ export default class SudokuInput extends Vue {
 
         let activeCell = this.state.handleGridUpdate(value);
 
+        // only work with actual cell changes.
         if (activeCell) {
             let activeNumpad = this.getNumpadButton(row, col);
 
@@ -113,6 +114,12 @@ export default class SudokuInput extends Vue {
                     row,
                     numpadRow,
                 )
+            }
+
+            // request error clears on any button change in guess mode.
+            // TODO should probably only clear relevant row/column/subgrid and not everything.
+            if (this.state.isGuessMode) {
+                this.state.resetBoardErrors();
             }
         }
     }
