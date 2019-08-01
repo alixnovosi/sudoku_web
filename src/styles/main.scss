@@ -46,7 +46,7 @@ $sudoku_background: $far_background_purple;
     background-color: $foreground_white;
 }
 
-button {
+button, label {
     border: 1px solid $button_border;
     border-radius: 10px;
 }
@@ -102,7 +102,7 @@ button {
     text-align: center;
     vertical-align: middle;
     margin: 10px;
-    width: 10em;
+    width: 9em;
 
     &:hover {
         background-color: $button_inactive_hover;
@@ -116,7 +116,6 @@ button {
 .modeSelect input[type="radio"]:checked+label {
     background-color: $button_active;
     color: #ddddff;
-    font-weight: bold;
 
     &:hover {
         background-color: $button_active_hover;
@@ -540,13 +539,17 @@ button {
     }
 }
 
+#app {
+    min-width: 1050px;
+}
+
 .sudokuSection {
     align-items: center;
     background-color: $lightest_foreground;
     display: flex;
     justify-content: center;
     min-height: 100%;
-    min-width: 1000px;
+    min-width: 1050px;
 }
 
 .noteSquare {
@@ -619,4 +622,19 @@ button {
     justify-content: space-around;
     margin: 1em;
     padding: 1em;
+}
+
+.submitPanel {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+
+    label {
+        background-color: $foreground_white;
+        border: 1px solid $button_border;
+        min-height: 20px;
+        padding: 1em;
+        text-align: center;
+        width: 9em;
+    }
 }

@@ -13,6 +13,13 @@ export default class SudokuState extends Vue {
         Subgrid: "subgrid",
     });
 
+    static readonly SolutionType = Object.freeze({
+        None: null,
+        Invalid: "Board Invalid",
+        Incomplete: "Board Incomplete",
+        Valid: "Board Valid: you win!!",
+    });
+
     @Prop()
     public minigridSize!: number;
 
@@ -29,6 +36,12 @@ export default class SudokuState extends Vue {
     public guessMode: string = "guess";
     public isGuessMode: boolean = true;
 
+    // whether we actively know there are errors on the board.
+    public isInError: boolean = false;
+
+    // solution - not submitted, invalid, incomplete, valid.
+    public solutionState: string|null = SudokuState.SolutionType.None;
+
     // callbacks for subcomponents.
     // initialized in the proper subcomponent.
     // SudokuGrid.
@@ -36,13 +49,20 @@ export default class SudokuState extends Vue {
     public onBoardClick: (row: number, col: number) => void = () => {};
     public getGridSection: (section_type: string, index: number) => number[] = () => {return []};
     public invalidateSection: (section_type: string, index: number) => void = () => {};
+    public hasEmptySquares: () => boolean = () => {return false};
+
+    // SudokuChecker calls these, but all the necessary data is in SudokuGrid.
+    // so they live there.
+    public resetBoard: () => void = () => {};
+    public resetBoardErrors: () => void = () => {};
 
     // SudokuInput
     public clearNumpadSquares: () => void = () => {};
     public enableNumpadSquares: (digits: number[]) => void = () => {};
     public onNumpadClick: (value: number, row: number, col: number) => void = () => {};
+    public resetGuessMode: () => void = () => {};
 
     // SudokuChecker
+    public submit: () => void = () => {};
     public checkBoard: () => void = () => {};
-    public resetBoardErrors: () => void = () => {};
 }

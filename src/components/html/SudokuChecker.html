@@ -1,4 +1,9 @@
 <div class="sudokuChecker">
+  <div class="submitPanel">
+    <button v-on:click="state.submit()">Submit Solution</button>
+    <label>{{ state.solutionState }}</label>
+  </div>
   <button v-on:click="state.checkBoard()">Check For Errors</button>
-  <button v-on:click="state.resetBoardErrors()">Clear Board Errors</button>
+  <button v-on:click="state.resetBoardErrors()">Clear Errors</button>
+  <button v-on:click="state.resetBoard()">Reset Board</button>
 </div>

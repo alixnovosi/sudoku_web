@@ -56,10 +56,11 @@ export default class SudokuInput extends Vue {
             this.numpadButtons.push(newRow);
         }
 
+        // register callbacks.
         this.state.clearNumpadSquares = this.clearNumpadSquares;
         this.state.enableNumpadSquares = this.enableNumpadSquares;
         this.state.onNumpadClick = this.onNumpadClick;
-
+        this.state.resetGuessMode = this.resetGuessMode;
     }
 
     // METHODS
@@ -180,7 +181,7 @@ export default class SudokuInput extends Vue {
 
     // parameters:
     // digits: array of digits from SudokuGrid to map to numpad buttons and enable.
-    // returns: none
+    // returns: none.
     // result: specified numpad buttons are enabled.
     public enableNumpadSquares(digits: number[]) {
         // map 1D array of digits to the corresponding elements in a 2D array
@@ -205,5 +206,9 @@ export default class SudokuInput extends Vue {
                 )
             }
         }
+    }
+
+    public resetGuessMode(): void {
+        this.state.guessMode = "true";
     }
 }

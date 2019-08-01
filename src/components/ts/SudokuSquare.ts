@@ -178,16 +178,16 @@ export default class SudokuSquare extends Vue {
         this.errorClasses.push(errorState);
     }
 
-    // parameters: none
+    // parameters: none.
     // returns: none.
     // result: resets error classes for square.
     public resetErrorState(): void {
         this.errorClasses = [];
     }
 
-    // parameters: none
+    // parameters: none.
     // returns: hint if this is a hint square, otherwise the current user value.
-    // result: none
+    // result: none.
     public getUserValue(): number {
         if (this.isHint) {
             return this.value;
@@ -197,6 +197,23 @@ export default class SudokuSquare extends Vue {
             return this.guess;
         } else {
             return 0;
+        }
+    }
+
+    // parameters: none.
+    // returns: none.
+    // result: square guesses and note are cleared.
+    public clearUserValues(): void {
+        if (this.isHint) {
+            return;
+        }
+
+        this.guess = null;
+
+        for (let r = 0; r < this.notes.length; r++) {
+            for (let c = 0; c < this.notes[r].length; c++) {
+                this.notes[r][c] = false;
+            }
         }
     }
 }

@@ -71,7 +71,10 @@ export default class SudokuGrid extends Vue {
         this.state.onBoardClick = this.onBoardClick;
         this.state.getGridSection = this.getGridSection;
         this.state.invalidateSection = this.invalidateSection;
+        this.state.hasEmptySquares = this.hasEmptySquares;
+
         this.state.resetBoardErrors = this.resetBoardErrors;
+        this.state.resetBoard = this.resetBoard;
     }
 
     // METHODS
@@ -100,7 +103,7 @@ export default class SudokuGrid extends Vue {
         return classes;
     }
 
-    // parameters: none
+    // parameters: none.
     // returns: current active square, or null if no such square.
     // result: current active board square is set to inactive, if valid.
     public clearCurrentActiveSquare(): SudokuSquare|null {
@@ -126,7 +129,7 @@ export default class SudokuGrid extends Vue {
     // parameters:
     // row: row of click on board.
     // col: column of click on board.
-    // returns: none
+    // returns: none.
     // result: updates current active square, clears numpad squares if appropriate.
     public onBoardClick(row: number, col: number): void {
         let oldActiveSquare = this.clearCurrentActiveSquare();
@@ -366,10 +369,12 @@ export default class SudokuGrid extends Vue {
         }
     }
 
-    // parameters: none
-    // returns: none
+    // parameters: none.
+    // returns: none.
     // result: reset errors on board.
     public resetBoardErrors(): void {
+
+        // reset squares.
         for (let r = 0; r < this.squareData.length; r++) {
 
             for (let c = 0; c < this.squareData[r].length; c++) {
@@ -383,5 +388,45 @@ export default class SudokuGrid extends Vue {
                 );
             }
         }
+
+        // reset state tracking variables.
+        this.state.isInError = false;
+        this.state.solutionState = null;
+    }
+
+    // parameters: none.
+    // returns: none.
+    // results: clear all square guesses/notes.
+    public resetBoard(): void {
+        this.state.resetBoardErrors();
+        this.state.resetGuessMode();
+        for (let r = 0; r < this.squareData.length; r++) {
+
+            for (let c = 0; c < this.squareData[r].length; c++) {
+                let square = this.squareData[r][c];
+                square.clearUserValues();
+
+                Vue.set(
+                    this.squareData[r],
+                    c,
+                    square,
+                );
+            }
+        }
+    }
+
+    // parameters: none.
+    // returns: are there unguessed squares on the board?
+    // results: none.
+    public hasEmptySquares(): boolean {
+        for (let r = 0; r < this.squareData.length; r++) {
+            for (let c = 0; c < this.squareData[r].length; c++) {
+                if (this.squareData[r][c].guess === null) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
