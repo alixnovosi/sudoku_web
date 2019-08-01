@@ -38,7 +38,7 @@ export default class SudokuInput extends Vue {
             );
         }
 
-        this.state.setActiveSquareGuessMode();
+        this.state.setSquareGuessModes();
 
         this.state.loadNumpadValues();
     };
@@ -76,7 +76,6 @@ export default class SudokuInput extends Vue {
         this.state.clearNumpadSquares = this.clearNumpadSquares;
         this.state.enableNumpadSquares = this.enableNumpadSquares;
         this.state.onNumpadClick = this.onNumpadClick;
-        this.state.setIsGuessMode = this.setIsGuessMode;
         this.state.loadNumpadValues= this.loadNumpadValues;
     }
 
@@ -94,9 +93,9 @@ export default class SudokuInput extends Vue {
             return;
         }
 
-        // only need to erase old button in guessMode.
+        // only need to erase old button if we are in guessMode.
         // and if it's valid.
-        if (this.state.activeGridSquare.isGuessMode) {
+        if (this.state.isGuessMode) {
             if (this.state.activeNumpadSquare) {
                 let oldActiveRow = this.state.activeNumpadSquare.row;
                 let oldActiveCol = this.state.activeNumpadSquare.column;
@@ -120,7 +119,7 @@ export default class SudokuInput extends Vue {
         if (activeGridSquare) {
             let numpadButton = this.numpadButtons[row][col];
             numpadButton.updateIsActive(
-                activeGridSquare.isGuessMode,
+                this.state.isGuessMode,
                 activeGridSquare.guess,
                 activeGridSquare.notes,
             );
@@ -135,7 +134,7 @@ export default class SudokuInput extends Vue {
 
             // request error clears on any button change in guess mode.
             // TODO should probably only clear relevant row/column/subgrid and not everything.
-            if (this.state.activeGridSquare.isGuessMode) {
+            if (this.state.isGuessMode) {
                 this.state.resetBoardErrors();
             }
         }
@@ -182,19 +181,6 @@ export default class SudokuInput extends Vue {
                 numpadRow,
             );
         };
-    }
-
-    // parameters:
-    // isGuessMode: value to apply to state guess mode.
-    // returns: none.
-    // result: resets guess mode to default.
-    // this is routed through here to emulate a click and make sure everything updates correctly.
-    public setIsGuessMode(isGuessMode: boolean): void {
-        if (isGuessMode) {
-            this.state.guessMode = "true";
-        } else {
-            this.state.guessMode = "false";
-        }
     }
 
     // parameters: none.

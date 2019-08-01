@@ -57,7 +57,7 @@ export default class SudokuGrid extends Vue {
 
         this.state.resetBoardErrors = this.resetBoardErrors;
         this.state.resetBoard = this.resetBoard;
-        this.state.setActiveSquareGuessMode = this.setActiveSquareGuessMode;
+        this.state.setSquareGuessModes = this.setSquareGuessModes;
     }
 
     // METHODS
@@ -137,9 +137,6 @@ export default class SudokuGrid extends Vue {
         // set up new numpad values.
         let digits = this.state.getDigitsToToggle(row, col);
         this.state.enableNumpadSquares(digits);
-
-        // and guess mode.
-        this.state.setIsGuessMode(this.state.activeGridSquare.isGuessMode);
     }
 
     // parameters:
@@ -150,9 +147,9 @@ export default class SudokuGrid extends Vue {
     public getDigitsToToggle(row: number, col: number): number[] {
         let gridSquare = this.squareData[row][col];
 
-        if (gridSquare.isGuessMode && gridSquare.guess === null) {
+        if (this.state.isGuessMode && gridSquare.guess === null) {
             return [];
-        } else if (gridSquare.isGuessMode && gridSquare.guess !== null) {
+        } else if (this.state.isGuessMode && gridSquare.guess !== null) {
             return [gridSquare.guess];
         }
 
@@ -175,7 +172,7 @@ export default class SudokuGrid extends Vue {
         let activeCell = this.state.activeGridSquare;
 
         if (activeCell) {
-            activeCell.updateValues(value);
+            activeCell.updateValues(this.state.isGuessMode, value);
 
             let newRow = this.squareData[activeCell.row];
             newRow[activeCell.column] = activeCell;
@@ -263,38 +260,19 @@ export default class SudokuGrid extends Vue {
             }
             row[length-1].appendToErrorState(SudokuSquare.ErrorStates.RightRow);
 
-            Vue.set(
-                this.squareData,
-                index,
-                row,
-            );
-
         } else if (section_type === SudokuState.SectionType.Column) {
             let square = this.squareData[0][index];
 
             square.appendToErrorState(SudokuSquare.ErrorStates.TopColumn);
-            Vue.set(
-                this.squareData[0],
-                index,
-                square,
-            );
+            // it's not obvious to me how to be more efficient here,
+            // because I need to touch every row.
 
             for (let i = 1; i < length-1; i++) {
                 square = this.squareData[i][index];
                 square.appendToErrorState(SudokuSquare.ErrorStates.MiddleColumn);
-                Vue.set(
-                    this.squareData[i],
-                    index,
-                    square,
-                );
             }
             square = this.squareData[length-1][index];
             square.appendToErrorState(SudokuSquare.ErrorStates.BottomColumn);
-            Vue.set(
-                this.squareData[length-1],
-                index,
-                square,
-            );
 
         } else if (section_type === SudokuState.SectionType.Subgrid) {
             // unsure how to do this in a less ugly way.
@@ -354,7 +332,6 @@ export default class SudokuGrid extends Vue {
     // results: clear all square guesses/notes.
     public resetBoard(): void {
         this.state.resetBoardErrors();
-        this.state.setIsGuessMode(true);
         for (let r = 0; r < this.squareData.length; r++) {
 
             for (let c = 0; c < this.squareData[r].length; c++) {
@@ -387,17 +364,18 @@ export default class SudokuGrid extends Vue {
 
     // parameters: none>
     // returns: none.
-    // results: set guess mode on the active square.
-    public setActiveSquareGuessMode(): void {
-        let square = this.state.activeGridSquare;
-        if (square) {
-            square.setGuessMode(this.state.isGuessMode);
+    // results: set guess mode on all squares.
+    public setSquareGuessModes(): void {
+        for (let r = 0; r < this.squareData.length; r++) {
 
-            let newRow = this.squareData[square.row];
-            newRow[square.column] = square;
+            let newRow = this.squareData[r];
+            for (let c = 0; c < newRow.length; c++) {
+                newRow[c].setGuessMode(this.state.isGuessMode);
+            }
+
             Vue.set(
                 this.squareData,
-                square.row,
+                r,
                 newRow,
             );
         }

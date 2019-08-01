@@ -121,11 +121,12 @@ export default class SudokuSquare extends Vue {
 
     // used to set visibility, spacing.
     // parameters:
+    // isGuessMode: state guess mode.
     // value: provided value.
     // return: none.
     // result: guess or notes updated.
-    public updateValues(value: number): void {
-        if (this.isGuessMode) {
+    public updateValues(isGuessMode: boolean, value: number): void {
+        if (isGuessMode) {
             if (this.guess === value) {
                 this.guess = null;
             } else {
