@@ -22,6 +22,8 @@ export default class SudokuInput extends Vue {
     // numpad button inputs.
     public numpadButtons: NumpadButton[][] = [];
 
+    public allNumpadCoords: [number, number][] = [];
+
     // WATCHERS
 
     // watch isGuessMode and update boolean isGuessMode appropriately.
@@ -29,7 +31,16 @@ export default class SudokuInput extends Vue {
     public updateGuessMode() {
         this.state.isGuessMode = (this.state.guessMode === "true");
 
-        this.state.clearNumpadSquares();
+        if (this.state.activeGridSquare) {
+            this.state.onBoardClick(
+                this.state.activeGridSquare.row,
+                this.state.activeGridSquare.column,
+            );
+        }
+
+        this.state.setActiveSquareGuessMode();
+
+        this.state.loadNumpadValues();
     };
 
     // basically a constructor.
@@ -38,6 +49,7 @@ export default class SudokuInput extends Vue {
         // but it forces an update and sets the radio buttons correctly.
         this.state.guessMode = "true";
 
+        // create numpadButtons, and record coords list at the same time.
         for (let r = 0; r < this.state.minigridSize; r++) {
 
             let newRow: NumpadButton[] = [];
@@ -48,9 +60,13 @@ export default class SudokuInput extends Vue {
                     new NumpadButton({
                         propsData: {
                             value: value,
+                            row: r,
+                            column: c,
                         }
                     })
                 );
+
+                this.allNumpadCoords.push([r, c]);
             }
 
             this.numpadButtons.push(newRow);
@@ -60,11 +76,12 @@ export default class SudokuInput extends Vue {
         this.state.clearNumpadSquares = this.clearNumpadSquares;
         this.state.enableNumpadSquares = this.enableNumpadSquares;
         this.state.onNumpadClick = this.onNumpadClick;
-        this.state.resetGuessMode = this.resetGuessMode;
+        this.state.setIsGuessMode = this.setIsGuessMode;
+        this.state.loadNumpadValues= this.loadNumpadValues;
     }
 
     // METHODS
-    //
+
     // parameters:
     // value: value of button that was clicked.
     // row: row of button clicked.
@@ -73,109 +90,73 @@ export default class SudokuInput extends Vue {
     // result: none besides return.
     public onNumpadClick(value: number, row: number, col: number): void {
         // do nothing if there is not a valid active square.
-        if (this.state.activeSquareRow === -1 || this.state.activeSquareCol === -1) {
+        if (!this.state.activeGridSquare) {
             return;
         }
 
         // only need to erase old button in guessMode.
-        if (this.state.isGuessMode) {
-            let oldActiveRow = this.state.activeNumpadRow;
-            let oldActiveCol = this.state.activeNumpadCol;
-            let oldActiveNumpad = this.getNumpadButton(oldActiveRow, oldActiveCol);
-            // erase old numpad before setting class on new one.
-            // check that oldActiveNumpad is valid and that both coordinates aren't the same as the
-            // current coords
-            // (which would mean we're clicking the same button over and over,
-            // and don't need to reset like this).
-            if (oldActiveNumpad && (oldActiveRow !== row || oldActiveCol !== col)) {
-                oldActiveNumpad.isActive = false;
+        // and if it's valid.
+        if (this.state.activeGridSquare.isGuessMode) {
+            if (this.state.activeNumpadSquare) {
+                let oldActiveRow = this.state.activeNumpadSquare.row;
+                let oldActiveCol = this.state.activeNumpadSquare.column;
+                let oldActiveNumpad = this.numpadButtons[oldActiveRow][oldActiveCol];
+                // erase old numpad before setting class on new one.
+                // check that oldActiveNumpad is valid and that both coordinates aren't the same as the
+                // current coords
+                // (which would mean we're clicking the same button over and over,
+                // and don't need to reset like this).
+                if (oldActiveNumpad && (oldActiveRow !== row || oldActiveCol !== col)) {
+                    oldActiveNumpad.isActive = false;
+                }
             }
         }
 
-        this.state.activeNumpadRow = row;
-        this.state.activeNumpadCol = col;
+        this.state.activeNumpadSquare = this.numpadButtons[row][col];
 
-        let activeCell = this.state.handleGridUpdate(value);
+        let activeGridSquare = this.state.handleGridUpdate(value);
 
         // only work with actual cell changes.
-        if (activeCell) {
-            let activeNumpad = this.getNumpadButton(row, col);
+        if (activeGridSquare) {
+            let numpadButton = this.numpadButtons[row][col];
+            numpadButton.updateIsActive(
+                activeGridSquare.isGuessMode,
+                activeGridSquare.guess,
+                activeGridSquare.notes,
+            );
 
-            if (activeNumpad) {
-                activeNumpad.updateIsActive(
-                    this.state.isGuessMode,
-                    activeCell.guess,
-                    activeCell.notes,
-                );
-
-                let numpadRow = this.numpadButtons[row];
-                numpadRow[col] = activeNumpad;
-                Vue.set(
-                    this.numpadButtons,
-                    row,
-                    numpadRow,
-                )
-            }
+            let numpadRow = this.numpadButtons[row]
+            numpadRow[col] = numpadButton;
+            Vue.set(
+                this.numpadButtons,
+                row,
+                numpadRow,
+            );
 
             // request error clears on any button change in guess mode.
             // TODO should probably only clear relevant row/column/subgrid and not everything.
-            if (this.state.isGuessMode) {
+            if (this.state.activeGridSquare.isGuessMode) {
                 this.state.resetBoardErrors();
             }
         }
     }
 
     // parameters: none.
-    // returns: an array of pairs of coordinates representing all minigridSize^2 numpad buttons.
-    // result: none besides return.
-    public getAllNumpadCoords(): [number, number][] {
-        let result: [number, number][] = [];
-        for (let r = 0; r < this.state.minigridSize; r++) {
-            for (let c = 0; c < this.state.minigridSize; c++) {
-                result.push([r, c]);
-            }
-        }
-
-        return result;
-    }
-
-    // parameters:
-    // row: row in numpad grid
-    // col: column in numpad grid.
-    // returns: numpad button if row and col are in bounds, null otherwise.
-    public getNumpadButton(row: number, col: number): NumpadButton|null {
-        if (row < 0 || row > (this.numpadButtons.length - 1)) {
-          return null;
-        }
-
-        let numpadRow: NumpadButton[] = this.numpadButtons[row];
-        if (col < 0 || col > (numpadRow.length - 1)) {
-            return null;
-        }
-
-        return numpadRow[col];
-    }
-
-    // parameters: none.
     // returns: none.
     // result: all numpad squares set to inactive.
     public clearNumpadSquares() {
-        let coords = this.getAllNumpadCoords();
-        for (let coord of coords) {
-            let oldActiveNumpad = this.getNumpadButton(coord[0], coord[1]);
+        for (let [row, col] of this.allNumpadCoords) {
+            let oldActiveNumpad = this.numpadButtons[row][col];
+            oldActiveNumpad.isActive = false;
 
-            if (oldActiveNumpad) {
-                oldActiveNumpad.isActive = false;
+            let numpadRow = this.numpadButtons[row];
+            numpadRow[col] = oldActiveNumpad;
 
-                let numpadRow = this.numpadButtons[coord[0]];
-                numpadRow[coord[1]] = oldActiveNumpad;
-
-                Vue.set(
-                    this.numpadButtons,
-                    coord[0],
-                    numpadRow,
-                )
-            }
+            Vue.set(
+                this.numpadButtons,
+                row,
+                numpadRow,
+            );
         }
     }
 
@@ -187,28 +168,50 @@ export default class SudokuInput extends Vue {
         // map 1D array of digits to the corresponding elements in a 2D array
         // of width this.state.minigridSize.
         for (let digit of digits) {
-            let coord: [number, number] = [
-              Math.floor((digit-1) / this.state.minigridSize),
-              (digit-1) % this.state.minigridSize
-            ];
+            let row = Math.floor((digit-1) / this.state.minigridSize);
+            let col = (digit-1) % this.state.minigridSize;
 
-            let numpadButton = this.getNumpadButton(coord[0], coord[1]);
-            if (numpadButton) {
-                numpadButton.isActive = true;
+            let numpadButton = this.numpadButtons[row][col];
+            numpadButton.isActive = true;
 
-                let numpadRow = this.numpadButtons[coord[0]];
-                numpadRow[coord[1]] = numpadButton;
+            let numpadRow = this.numpadButtons[row];
+            numpadRow[col] = numpadButton;
+            Vue.set(
+                this.numpadButtons,
+                row,
+                numpadRow,
+            );
+        };
+    }
 
-                Vue.set(
-                    this.numpadButtons,
-                    coord[0],
-                    numpadRow,
-                )
-            }
+    // parameters:
+    // isGuessMode: value to apply to state guess mode.
+    // returns: none.
+    // result: resets guess mode to default.
+    // this is routed through here to emulate a click and make sure everything updates correctly.
+    public setIsGuessMode(isGuessMode: boolean): void {
+        if (isGuessMode) {
+            this.state.guessMode = "true";
+        } else {
+            this.state.guessMode = "false";
         }
     }
 
-    public resetGuessMode(): void {
-        this.state.guessMode = "true";
+    // parameters: none.
+    // returns: none.
+    // result: load numpad values from active square.
+    public loadNumpadValues(): void {
+        // do nothing if there is not a valid active square.
+        if (!this.state.activeGridSquare) {
+            return;
+        }
+
+        this.state.clearNumpadSquares();
+
+        let activeGridSquare = this.state.activeGridSquare;
+
+        let digits = this.state.getDigitsToToggle(activeGridSquare.row, activeGridSquare.column);
+
+        this.state.enableNumpadSquares(digits);
     }
 }

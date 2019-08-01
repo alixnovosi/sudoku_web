@@ -3,8 +3,14 @@ import { Component, Prop } from "vue-property-decorator";
 
 @Component
 export default class NumpadButton extends Vue {
-    @Prop({default: 0})
+    @Prop()
     public value!: number;
+
+    // grid position
+    @Prop()
+    public row!: number;
+    @Prop()
+    public column!: number;
 
     public isActive: boolean = false;
 

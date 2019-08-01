@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 
 import SudokuSquare from "./SudokuSquare";
 import SudokuState from "./SudokuState";
@@ -21,25 +21,6 @@ export default class SudokuGrid extends Vue {
     state!: SudokuState;
 
     public squareData: SudokuSquare[][] = [];
-
-    // WATCHERS
-
-    // watch isGuessMode and update boolean isGuessMode appropriately.
-    // update grid squares
-    @Watch("state.isGuessMode")
-    public handleGuessModeChange() {
-        this.state.onBoardClick(this.state.activeSquareRow, this.state.activeSquareCol);
-
-        // TODO this seems inefficient??
-        for (let r = 0; r < this.squareData.length; r++) {
-            for (let c = 0; c < this.squareData.length; c++) {
-                let newSquare = this.squareData[r][c];
-                newSquare.isGuessMode = this.state.isGuessMode;
-
-                this.squareData[r][c] = newSquare;
-            }
-        }
-    };
 
     // basically a constructor.
     mounted() {
@@ -72,9 +53,11 @@ export default class SudokuGrid extends Vue {
         this.state.getGridSection = this.getGridSection;
         this.state.invalidateSection = this.invalidateSection;
         this.state.hasEmptySquares = this.hasEmptySquares;
+        this.state.getDigitsToToggle = this.getDigitsToToggle;
 
         this.state.resetBoardErrors = this.resetBoardErrors;
         this.state.resetBoard = this.resetBoard;
+        this.state.setActiveSquareGuessMode = this.setActiveSquareGuessMode;
     }
 
     // METHODS
@@ -107,18 +90,17 @@ export default class SudokuGrid extends Vue {
     // returns: current active square, or null if no such square.
     // result: current active board square is set to inactive, if valid.
     public clearCurrentActiveSquare(): SudokuSquare|null {
-        let activeSquare: SudokuSquare|null =
-            this.getSquare(this.state.activeSquareRow, this.state.activeSquareCol);
+        let activeSquare: SudokuSquare|null = this.state.activeGridSquare;
 
         // set inactive if it's a valid square.
         if (activeSquare) {
             activeSquare.isActive = false;
 
-            let oldRow = this.squareData[this.state.activeSquareRow];
-            oldRow[this.state.activeSquareCol] = activeSquare;
+            let oldRow = this.squareData[activeSquare.row];
+            oldRow[activeSquare.column] = activeSquare;
             Vue.set(
                 this.squareData,
-                this.state.activeSquareRow,
+                activeSquare.row,
                 oldRow
             )
         }
@@ -132,31 +114,32 @@ export default class SudokuGrid extends Vue {
     // returns: none.
     // result: updates current active square, clears numpad squares if appropriate.
     public onBoardClick(row: number, col: number): void {
+        // clear existing active square and numpad squares, if square was active.
         let oldActiveSquare = this.clearCurrentActiveSquare();
         if (oldActiveSquare) {
             this.state.clearNumpadSquares();
         }
 
-        // and new.
-        this.state.activeSquareRow = row;
-        this.state.activeSquareCol = col;
-        let newActiveSquare = this.getSquare(row, col);
-        if (newActiveSquare) {
-            // activate square
-            newActiveSquare.isActive = true;
+        // activate square
+        let newActiveSquare = this.squareData[row][col];
+        newActiveSquare.isActive = true;
 
-            let newRow = this.squareData[row];
-            newRow[col] = newActiveSquare;
-            Vue.set(
-                this.squareData,
-                row,
-                newRow
-            )
+        this.state.activeGridSquare = newActiveSquare;
 
-            // and numpad toggle
-            let digits = this.getDigitsToToggle(row, col);
-            this.state.enableNumpadSquares(digits);
-        }
+        let newRow = this.squareData[row];
+        newRow[col] = newActiveSquare;
+        Vue.set(
+            this.squareData,
+            row,
+            newRow
+        )
+
+        // set up new numpad values.
+        let digits = this.state.getDigitsToToggle(row, col);
+        this.state.enableNumpadSquares(digits);
+
+        // and guess mode.
+        this.state.setIsGuessMode(this.state.activeGridSquare.isGuessMode);
     }
 
     // parameters:
@@ -165,49 +148,23 @@ export default class SudokuGrid extends Vue {
     // returns: the list of numpad coordinates that need to be toggled based on the current mode.
     // result:  none.
     public getDigitsToToggle(row: number, col: number): number[] {
-        let digits: number[] = [];
-        let gridSquare = this.getSquare(row, col);
+        let gridSquare = this.squareData[row][col];
 
-        if (!gridSquare) {
-            return digits;
+        if (gridSquare.isGuessMode && gridSquare.guess === null) {
+            return [];
+        } else if (gridSquare.isGuessMode && gridSquare.guess !== null) {
+            return [gridSquare.guess];
         }
 
-        if (this.state.isGuessMode) {
-            if (gridSquare.guess !== null) {
-                digits = [gridSquare.guess];
-            }
-
-        } else {
-            for (let r = 0; r < this.state.minigridSize; r++) {
-                for (let c = 0; c < this.state.minigridSize; c++) {
-                    if (gridSquare.notes[r][c]) {
-                        digits.push((r * this.state.minigridSize) + c + 1);
-                    }
+        let digits: number[] = [];
+        for (let r = 0; r < this.state.minigridSize; r++) {
+            for (let c = 0; c < this.state.minigridSize; c++) {
+                if (gridSquare.notes[r][c]) {
+                    digits.push((r * this.state.minigridSize) + c + 1);
                 }
             }
         }
-
         return digits;
-    }
-
-    // bounds-checked get on array that returns null if out of bounds.
-    // for simplifying checks elsewhere.
-    // parameters:
-    // row: row of board.
-    // col: column of board.
-    // returns: square indicated by row/col, or null if no such square.
-    // result: none.
-    public getSquare(row: number, col: number): SudokuSquare|null {
-        if (row < 0 || row > (this.squareData.length - 1)) {
-          return null;
-        }
-
-        let squareRow = this.squareData[row];
-        if (col < 0 || col > (squareRow.length - 1)) {
-            return null;
-        }
-
-        return squareRow[col];
     }
 
     // parameters:
@@ -215,20 +172,18 @@ export default class SudokuGrid extends Vue {
     // returns: cell referred to by current activeRow/activeCol coordinates.
     // result: specified cell has its guess or notes updated as appropriate.
     public handleGridUpdate(value: number): SudokuSquare|null {
-        let activeCell = this.getSquare(this.state.activeSquareRow, this.state.activeSquareCol);
+        let activeCell = this.state.activeGridSquare;
 
         if (activeCell) {
-            activeCell.updateValues(this.state.isGuessMode, value);
+            activeCell.updateValues(value);
 
-            let newRow = this.squareData[this.state.activeSquareRow];
-            newRow[this.state.activeSquareCol] = activeCell;
+            let newRow = this.squareData[activeCell.row];
+            newRow[activeCell.column] = activeCell;
             Vue.set(
                 this.squareData,
-                this.state.activeSquareRow,
+                activeCell.row,
                 newRow
             )
-
-            activeCell = this.getSquare(this.state.activeSquareRow, this.state.activeSquareCol);
         }
 
         return activeCell;
@@ -399,7 +354,7 @@ export default class SudokuGrid extends Vue {
     // results: clear all square guesses/notes.
     public resetBoard(): void {
         this.state.resetBoardErrors();
-        this.state.resetGuessMode();
+        this.state.setIsGuessMode(true);
         for (let r = 0; r < this.squareData.length; r++) {
 
             for (let c = 0; c < this.squareData[r].length; c++) {
@@ -428,5 +383,23 @@ export default class SudokuGrid extends Vue {
         }
 
         return false;
+    }
+
+    // parameters: none>
+    // returns: none.
+    // results: set guess mode on the active square.
+    public setActiveSquareGuessMode(): void {
+        let square = this.state.activeGridSquare;
+        if (square) {
+            square.setGuessMode(this.state.isGuessMode);
+
+            let newRow = this.squareData[square.row];
+            newRow[square.column] = square;
+            Vue.set(
+                this.squareData,
+                square.row,
+                newRow,
+            );
+        }
     }
 }

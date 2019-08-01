@@ -2,6 +2,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
 import SudokuSquare from "./SudokuSquare";
+import NumpadButton from "./NumpadButton";
 
 // shared state between subcomponents.
 @Component
@@ -25,11 +26,9 @@ export default class SudokuState extends Vue {
 
     // track active square and numpad for correctly updating state and lightup status.
     // also for resetting those as we move around the board.
-    public activeSquareRow: number = -1;
-    public activeSquareCol: number = -1;
+    public activeGridSquare: SudokuSquare|null = null;
 
-    public activeNumpadRow: number = -1;
-    public activeNumpadCol: number = -1;
+    public activeNumpadSquare: NumpadButton|null = null;
 
     // are we in guess mode or note edit mode?
     // string and boolean, to work with radio buttons.
@@ -46,23 +45,30 @@ export default class SudokuState extends Vue {
     // initialized in the proper subcomponent.
     // SudokuGrid.
     public handleGridUpdate: (value: number) => SudokuSquare|null = () => new SudokuSquare();
-    public onBoardClick: (row: number, col: number) => void = () => {};
+    public onBoardClick: (row: number, col: number) => void = this.errorVoid;
     public getGridSection: (section_type: string, index: number) => number[] = () => {return []};
-    public invalidateSection: (section_type: string, index: number) => void = () => {};
+    public invalidateSection: (section_type: string, index: number) => void = this.errorVoid;
     public hasEmptySquares: () => boolean = () => {return false};
+    public getDigitsToToggle: (row: number, col: number) => number[] = () => {return []};
+    public setActiveSquareGuessMode: () => void = this.errorVoid;
 
     // SudokuChecker calls these, but all the necessary data is in SudokuGrid.
     // so they live there.
-    public resetBoard: () => void = () => {};
-    public resetBoardErrors: () => void = () => {};
+    public resetBoard: () => void = this.errorVoid;
+    public resetBoardErrors: () => void = this.errorVoid;
 
     // SudokuInput
-    public clearNumpadSquares: () => void = () => {};
-    public enableNumpadSquares: (digits: number[]) => void = () => {};
-    public onNumpadClick: (value: number, row: number, col: number) => void = () => {};
-    public resetGuessMode: () => void = () => {};
+    public clearNumpadSquares: () => void = this.errorVoid;
+    public enableNumpadSquares: (digits: number[]) => void = this.errorVoid;
+    public onNumpadClick: (value: number, row: number, col: number) => void = this.errorVoid;
+    public setIsGuessMode: (isGuessMode: boolean) => void = this.errorVoid;
+    public loadNumpadValues: () => void = this.errorVoid;
 
     // SudokuChecker
-    public submit: () => void = () => {};
-    public checkBoard: () => void = () => {};
+    public submit: () => void = this.errorVoid;
+    public checkBoard: () => void = this.errorVoid;
+
+    private errorVoid(): void {
+        console.log("CALLED DEFAULT METHOD");
+    }
 }

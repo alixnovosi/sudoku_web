@@ -31,10 +31,10 @@ export default class SudokuSquare extends Vue {
     });
 
     // true value and whether it's shown initially.
-    @Prop({default: 0})
+    @Prop()
     public value!: number;
 
-    @Prop({default: false})
+    @Prop()
     public isHint!: boolean;
 
     // grid position
@@ -121,12 +121,11 @@ export default class SudokuSquare extends Vue {
 
     // used to set visibility, spacing.
     // parameters:
-    // isGuessMode: whether this value was submitted in guess mode or note mode.
     // value: provided value.
     // return: none.
     // result: guess or notes updated.
-    public updateValues(isGuessMode: boolean, value: number): void {
-        if (isGuessMode) {
+    public updateValues(value: number): void {
+        if (this.isGuessMode) {
             if (this.guess === value) {
                 this.guess = null;
             } else {
@@ -173,8 +172,6 @@ export default class SudokuSquare extends Vue {
     // returns: none.
     // result: appends to this.errorClasses, which will affect styles.
     public appendToErrorState(errorState: string): void {
-
-        console.log(`appending ${errorState} to classes`);
         this.errorClasses.push(errorState);
     }
 
@@ -214,6 +211,19 @@ export default class SudokuSquare extends Vue {
             for (let c = 0; c < this.notes[r].length; c++) {
                 this.notes[r][c] = false;
             }
+        }
+    }
+
+    // parameters:
+    // guessMode: guess mode from up on high to set on ourselves.
+    // returns: none
+    // result: this square is in board guess mode if we don't have a guess,
+    //         otherwise we remain in guess mode.
+    public setGuessMode(isGuessMode: boolean) {
+        if (this.guess !== null) {
+            this.isGuessMode = true;
+        } else {
+            this.isGuessMode = isGuessMode;
         }
     }
 }

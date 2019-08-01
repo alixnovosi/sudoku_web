@@ -98,6 +98,7 @@ button, label {
     border-radius: 10px;
     color: $button_border;
     cursor: pointer;
+    font-size: 15px;
     padding: 1em;
     text-align: center;
     vertical-align: middle;
@@ -133,8 +134,9 @@ button, label {
 .sudokuGrid {
     background-color: $sudoku_background;
     flex-direction: column;
+    flex-grow: 2;
     list-style: none;
-    padding: 2em;
+    padding: 1em;
 
     button {
         border-radius: 0;
@@ -165,7 +167,9 @@ button, label {
     // confusing naming, but this is to offset left and right and up and down.
     // horizontal negative is left, positive right.
     // vertical negative is top, positive bottom.
-    $positive_border: 5px;
+    // there was a 1px gap on the right and top with the "borders" at the same size.
+    // dunno why and I'm not investigating further at this time.
+    $positive_border: 6px;
     $negative_border: -5px;
     $error_color: #ff5555;
     border: none;
@@ -540,7 +544,6 @@ button, label {
 }
 
 #app {
-    min-width: 1050px;
 }
 
 .sudokuSection {
@@ -549,7 +552,6 @@ button, label {
     display: flex;
     justify-content: center;
     min-height: 100%;
-    min-width: 1050px;
 }
 
 .noteSquare {
@@ -618,23 +620,27 @@ button, label {
 .sudokuChecker, .sudokuInput {
     align-items: center;
     flex-direction: column;
+    flex-grow: 1;
     height: 30em;
     justify-content: space-around;
     margin: 1em;
-    padding: 1em;
+    padding: 0.5em;
 }
 
 .submitPanel {
-    align-items: center;
+    align-items: stretch;
     display: flex;
     flex-direction: column;
+    justify-content: stretch;
 
     label {
         background-color: $foreground_white;
         border: 1px solid $button_border;
+        font-size: 15px;
+        line-height: 20px;
+        margin: 0.5em;
         min-height: 20px;
         padding: 1em;
         text-align: center;
-        width: 9em;
     }
 }

@@ -1,5 +1,5 @@
 .activeSquare {
-  background-color: #aabbaa;
+  background-color: #99aa99;
 }
 
 .defaultFilledSquare {
@@ -16,32 +16,32 @@
   background-color: #ffffff;
 }
 
+button, label {
+  border: 1px solid #000011;
+  border-radius: 10px;
+}
+
 .buttonGrid {
   margin: 1em;
   margin-right: 1em;
 }
 .buttonGrid button {
-  border: 1px solid #000011;
-  border-radius: 10px;
+  background-color: #ccccdd;
   font-size: 24px;
   height: 60px;
   width: 60px;
   margin: 0;
   padding: 0;
 }
+.buttonGrid button:hover {
+  background-color: #eeeeff;
+}
 .buttonGrid .activeNumpadButton {
-  background-color: #ccccdd;
+  background-color: #444455;
+  color: #eeeeff;
 }
-
-.sudokuChecker button {
-  background-color: #555577;
-  border: 1px solid #000000;
-  border-radius: 10px;
-  color: #ddddff;
-  padding: 1em;
-}
-.sudokuChecker button:hover {
-  background-color: #666688;
+.buttonGrid .activeNumpadButton:hover {
+  color: #444455;
 }
 
 .sudokuSection button:focus {
@@ -58,40 +58,55 @@
   display: none;
 }
 
-.modeSelect label {
-  background-color: #ffffff;
-  border: 1px solid #000000;
+.modeSelect label, .sudokuChecker button {
+  background-color: #ccccdd;
+  border: 1px solid #000011;
   border-radius: 10px;
+  color: #000011;
   cursor: pointer;
-  float: left;
-  margin: 10px;
+  font-size: 15px;
   padding: 1em;
   text-align: center;
   vertical-align: middle;
-  width: 10em;
+  margin: 10px;
+  width: 9em;
 }
-.modeSelect label:hover {
-  background-color: #ddddff;
+.modeSelect label:hover, .sudokuChecker button:hover {
+  background-color: #eeeeff;
+}
+
+.modeSelect label {
+  float: left;
 }
 
 .modeSelect input[type=radio]:checked + label {
-  background-color: #555577;
+  background-color: #444455;
   color: #ddddff;
-  font-weight: bold;
 }
 .modeSelect input[type=radio]:checked + label:hover {
-  background-color: #666688;
+  background-color: #888899;
 }
 
 .sudokuGrid, .sudokuInput, .sudokuChecker, .sudokuRow {
   display: flex;
 }
 
+.sudokuInput, .sudokuChecker {
+  background-color: #777788;
+}
+
 .sudokuGrid {
   background-color: #444455;
   flex-direction: column;
+  flex-grow: 2;
   list-style: none;
-  padding: 2em;
+  padding: 1em;
+}
+.sudokuGrid button {
+  border-radius: 0;
+}
+.sudokuGrid button:hover {
+  background-color: #ccddcc;
 }
 .sudokuGrid ul {
   list-style: none;
@@ -112,58 +127,57 @@
   border: none;
 }
 .sudokuSquare.errorSquare.leftRowError, .noteSquare.errorSquare.leftRowError, .defaultFilledSquare.errorSquare.leftRowError {
-  box-shadow: 5px 0 0 0 #444455, 0 -5px 0 0 #ff5555, 0 5px 0 0 #ff5555, 5px -5px 0 0 #ff5555, -5px -5px 0 0 #ff5555, 5px 5px 0 0 #ff5555, -5px 5px 0 0 #ff5555;
+  box-shadow: 6px 0 0 0 #444455, 0 -5px 0 0 #ff5555, 0 6px 0 0 #ff5555, 6px -5px 0 0 #ff5555, -5px -5px 0 0 #ff5555, 6px 6px 0 0 #ff5555, -5px 6px 0 0 #ff5555;
 }
 .sudokuSquare.errorSquare.centerRowError, .noteSquare.errorSquare.centerRowError, .defaultFilledSquare.errorSquare.centerRowError {
-  box-shadow: 5px 0 0 0 #444455, -5px 0 0 0 #444455, 0 -5px 0 0 #ff5555, 0 5px 0 0 #ff5555, 5px -5px 0 0 #ff5555, -5px -5px 0 0 #ff5555, 5px 5px 0 0 #ff5555, -5px 5px 0 0 #ff5555;
+  box-shadow: 6px 0 0 0 #444455, -5px 0 0 0 #444455, 0 -5px 0 0 #ff5555, 0 6px 0 0 #ff5555, 6px -5px 0 0 #ff5555, -5px -5px 0 0 #ff5555, 6px 6px 0 0 #ff5555, -5px 6px 0 0 #ff5555;
 }
 .sudokuSquare.errorSquare.rightRowError, .noteSquare.errorSquare.rightRowError, .defaultFilledSquare.errorSquare.rightRowError {
-  box-shadow: -5px 0 0 0 #444455, 0 -5px 0 0 #ff5555, 0 5px 0 0 #ff5555, 5px -5px 0 0 #ff5555, -5px -5px 0 0 #ff5555, 5px 5px 0 0 #ff5555, -5px 5px 0 0 #ff5555;
+  box-shadow: -5px 0 0 0 #444455, 0 -5px 0 0 #ff5555, 0 6px 0 0 #ff5555, 6px -5px 0 0 #ff5555, -5px -5px 0 0 #ff5555, 6px 6px 0 0 #ff5555, -5px 6px 0 0 #ff5555;
 }
 .sudokuSquare.errorSquare.topColumnError, .noteSquare.errorSquare.topColumnError, .defaultFilledSquare.errorSquare.topColumnError {
-  box-shadow: 0 5px 0 0 #444455, -5px 0 0 0 #ff5555, 5px 0 0 0 #ff5555, -5px -5px 0 0 #ff5555, -5px 5px 0 0 #ff5555, 5px -5px 0 0 #ff5555, 5px 5px 0 0 #ff5555;
+  box-shadow: 0 6px 0 0 #444455, -5px 0 0 0 #ff5555, 6px 0 0 0 #ff5555, -5px -5px 0 0 #ff5555, -5px 6px 0 0 #ff5555, 6px -5px 0 0 #ff5555, 6px 6px 0 0 #ff5555;
 }
 .sudokuSquare.errorSquare.middleColumnError, .noteSquare.errorSquare.middleColumnError, .defaultFilledSquare.errorSquare.middleColumnError {
-  box-shadow: 0 -5px 0 0 #444455, 0 5px 0 0 #444455, -5px 0 0 0 #ff5555, 5px 0 0 0 #ff5555, -5px -5px 0 0 #ff5555, -5px 5px 0 0 #ff5555, 5px -5px 0 0 #ff5555, 5px 5px 0 0 #ff5555;
+  box-shadow: 0 -5px 0 0 #444455, 0 6px 0 0 #444455, -5px 0 0 0 #ff5555, 6px 0 0 0 #ff5555, -5px -5px 0 0 #ff5555, -5px 6px 0 0 #ff5555, 6px -5px 0 0 #ff5555, 6px 6px 0 0 #ff5555;
 }
 .sudokuSquare.errorSquare.bottomColumnError, .noteSquare.errorSquare.bottomColumnError, .defaultFilledSquare.errorSquare.bottomColumnError {
-  box-shadow: 0 -5px 0 0 #444455, -5px 0 0 0 #ff5555, 5px 0 0 0 #ff5555, -5px -5px 0 0 #ff5555, -5px 5px 0 0 #ff5555, 5px -5px 0 0 #ff5555, 5px 5px 0 0 #ff5555;
+  box-shadow: 0 -5px 0 0 #444455, -5px 0 0 0 #ff5555, 6px 0 0 0 #ff5555, -5px -5px 0 0 #ff5555, -5px 6px 0 0 #ff5555, 6px -5px 0 0 #ff5555, 6px 6px 0 0 #ff5555;
 }
 .sudokuSquare.errorSquare.topLeftSubgridError, .noteSquare.errorSquare.topLeftSubgridError, .defaultFilledSquare.errorSquare.topLeftSubgridError {
-  box-shadow: 5px 0 0 0 #444455, 0 5px 0 0 #444455, -5px -5px 0 0 #ff5555, 5px -5px 0 0 #ff5555, -5px 5px 0 0 #ff5555;
+  box-shadow: 6px 0 0 0 #444455, 0 6px 0 0 #444455, -5px -5px 0 0 #ff5555, 6px -5px 0 0 #ff5555, -5px 6px 0 0 #ff5555;
 }
 .sudokuSquare.errorSquare.topCenterSubgridError, .noteSquare.errorSquare.topCenterSubgridError, .defaultFilledSquare.errorSquare.topCenterSubgridError {
-  box-shadow: -5px 0 0 0 #444455, 5px 0 0 0 #444455, 0 5px 0 0 #444455, -5px -5px 0 0 #ff5555, 5px -5px 0 0 #ff5555;
+  box-shadow: -5px 0 0 0 #444455, 6px 0 0 0 #444455, 0 6px 0 0 #444455, -5px -5px 0 0 #ff5555, 6px -5px 0 0 #ff5555;
 }
 .sudokuSquare.errorSquare.topRightSubgridError, .noteSquare.errorSquare.topRightSubgridError, .defaultFilledSquare.errorSquare.topRightSubgridError {
-  box-shadow: -5px 0 0 0 #444455, 0 5px 0 0 #444455, -5px -5px 0 0 #ff5555, 5px -5px 0 0 #ff5555, 5px 5px 0 0 #ff5555;
+  box-shadow: -5px 0 0 0 #444455, 0 6px 0 0 #444455, -5px -5px 0 0 #ff5555, 6px -5px 0 0 #ff5555, 6px 6px 0 0 #ff5555;
 }
 .sudokuSquare.errorSquare.middleLeftSubgridError, .noteSquare.errorSquare.middleLeftSubgridError, .defaultFilledSquare.errorSquare.middleLeftSubgridError {
-  box-shadow: 0 -5px 0 0 #444455, 0 5px 0 0 #444455, 5px 0 0 0 #444455, -5px 0 0 0 #ff5555, -5px -5px 0 0 #ff5555, -5px 5px 0 0 #ff5555;
+  box-shadow: 0 -5px 0 0 #444455, 0 6px 0 0 #444455, 6px 0 0 0 #444455, -5px 0 0 0 #ff5555, -5px -5px 0 0 #ff5555, -5px 6px 0 0 #ff5555;
 }
 .sudokuSquare.errorSquare.middleCenterSubgridError, .noteSquare.errorSquare.middleCenterSubgridError, .defaultFilledSquare.errorSquare.middleCenterSubgridError {
-  box-shadow: 0 -5px 0 0 #444455, 0 5px 0 0 #444455, 5px 0 0 0 #444455, -5px 0 0 0 #444455, -5px -5px 0 0 #ff5555, 5px -5px 0 0 #ff5555, -5px 5px 0 0 #ff5555, 5px 5px 0 0 #ff5555;
+  box-shadow: 0 -5px 0 0 #444455, 0 6px 0 0 #444455, 6px 0 0 0 #444455, -5px 0 0 0 #444455, -5px -5px 0 0 #ff5555, 6px -5px 0 0 #ff5555, -5px 6px 0 0 #ff5555, 6px 6px 0 0 #ff5555;
 }
 .sudokuSquare.errorSquare.middleRightSubgridError, .noteSquare.errorSquare.middleRightSubgridError, .defaultFilledSquare.errorSquare.middleRightSubgridError {
-  box-shadow: 0 -5px 0 0 #444455, 0 5px 0 0 #444455, -5px 0 0 0 #444455, 5px 0 0 0 #ff5555, 5px -5px 0 0 #ff5555, 5px 5px 0 0 #ff5555;
+  box-shadow: 0 -5px 0 0 #444455, 0 6px 0 0 #444455, -5px 0 0 0 #444455, 6px 0 0 0 #ff5555, 6px -5px 0 0 #ff5555, 6px 6px 0 0 #ff5555;
 }
 .sudokuSquare.errorSquare.bottomLeftSubgridError, .noteSquare.errorSquare.bottomLeftSubgridError, .defaultFilledSquare.errorSquare.bottomLeftSubgridError {
-  box-shadow: 5px 0 0 0 #444455, 0 -5px 0 0 #444455, -5px 5px 0 0 #ff5555, 5px 5px 0 0 #ff5555, -5px -5px 0 0 #ff5555;
+  box-shadow: 6px 0 0 0 #444455, 0 -5px 0 0 #444455, -5px 6px 0 0 #ff5555, 6px 6px 0 0 #ff5555, -5px -5px 0 0 #ff5555;
 }
 .sudokuSquare.errorSquare.bottomCenterSubgridError, .noteSquare.errorSquare.bottomCenterSubgridError, .defaultFilledSquare.errorSquare.bottomCenterSubgridError {
-  box-shadow: -5px 0 0 0 #444455, 5px 0 0 0 #444455, 0 -5px 0 0 #444455, -5px 5px 0 0 #ff5555, 5px 5px 0 0 #ff5555;
+  box-shadow: -5px 0 0 0 #444455, 6px 0 0 0 #444455, 0 -5px 0 0 #444455, -5px 6px 0 0 #ff5555, 6px 6px 0 0 #ff5555;
 }
 .sudokuSquare.errorSquare.bottomRightSubgridError, .noteSquare.errorSquare.bottomRightSubgridError, .defaultFilledSquare.errorSquare.bottomRightSubgridError {
-  box-shadow: -5px 0 0 0 #444455, 0 -5px 0 0 #444455, -5px 5px 0 0 #ff5555, 5px 5px 0 0 #ff5555, 5px -5px 0 0 #ff5555;
+  box-shadow: -5px 0 0 0 #444455, 0 -5px 0 0 #444455, -5px 6px 0 0 #ff5555, 6px 6px 0 0 #ff5555, 6px -5px 0 0 #ff5555;
 }
 
 .sudokuSection {
   align-items: center;
-  background-color: #9999aa;
+  background-color: #efefef;
   display: flex;
-  justify-content: space-around;
-  min-height: 500px;
-  min-width: 1000px;
+  justify-content: center;
+  min-height: 100%;
 }
 
 .noteSquare {
@@ -227,10 +241,27 @@
 
 .sudokuChecker, .sudokuInput {
   align-items: center;
-  background-color: #ddddff;
   flex-direction: column;
+  flex-grow: 1;
   height: 30em;
   justify-content: space-around;
   margin: 1em;
+  padding: 0.5em;
+}
+
+.submitPanel {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
+.submitPanel label {
+  background-color: #ffffff;
+  border: 1px solid #000011;
+  font-size: 15px;
+  line-height: 20px;
+  margin: 0.5em;
+  min-height: 20px;
   padding: 1em;
+  text-align: center;
 }

@@ -4,7 +4,7 @@
         "downlevelIteration": true,
         "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,
-        "module": "es2015",
+        "module": "node",
         "moduleResolution": "node",
         "newLine": "lf",
         "noImplicitReturns": true,
