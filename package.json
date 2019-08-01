@@ -2,27 +2,37 @@
     "name": "sudoku_web",
     "version": "1.0.0",
     "description": "web sudoku player",
-    "main": "index.js",
+    "main": "index.ts",
     "dependencies": {
         "vue": "^2.6.10",
         "vue-class-component": "^7.1.0",
         "vue-property-decorator": "^8.2.1"
     },
     "devDependencies": {
+        "@types/mini-css-extract-plugin": "^0.8.0",
         "@types/node": "^12.6.8",
+        "@types/sass": "^1.16.0",
+        "@types/webpack": "^4.32.1",
+        "@types/webpack-dev-server": "^3.1.7",
         "css-loader": "^3.1.0",
-        "node-sass": "^4.12.0",
+        "mini-css-extract-plugin": "^0.8.0",
+        "sass": "^1.22.9",
         "sass-loader": "^7.1.0",
+        "style-loader": "^0.23.1",
         "ts-loader": "^6.0.4",
+        "ts-node": "^8.3.0",
+        "tsconfig-paths": "^3.8.0",
         "typescript": "^3.5.3",
+        "vue-loader": "^15.7.1",
         "vue-template-compiler": "^2.6.10",
         "vue-template-loader": "^1.0.0",
-        "webpack": "^4.36.1",
-        "webpack-cli": "^3.3.6"
+        "webpack": "^4.38.0",
+        "webpack-cli": "^3.3.6",
+        "webpack-dev-server": "^3.7.2"
     },
     "scripts": {
-        "dev": "webpack-dev-server",
-        "build": "webpack --mode production",
+        "dev": "TS_NODE_PROJECT=\"tsconfig-webpack.json\" webpack-dev-server",
+        "build": "TS_NODE_PROJECT=\"tsconfig-webpack.json\" webpack --mode production",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {

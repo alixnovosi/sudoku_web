@@ -1,12 +1,39 @@
 $cell_size: 40px;
-$sudoku_background: #444455;
+
+// define colors.
+$darkest_blue_black: #000011;
+$darker_blue: #ccccdd;
+$far_background_purple: #444455;
+
+$pleasant_green: #99aa99;
+$lighter_green: #ccddcc;
+
+$lightest_foreground: #efefef;
+
+// define color purposes.
+
+// sudoku grid.
+$active_square: $pleasant_green;
+$hover_square: $lighter_green;
+
+// UI side buttons.
+$button_border: $darkest_blue_black;
+$button_active: $far_background_purple;
+$button_active_hover: #888899;
+$button_inactive: #ccccdd;
+$button_inactive_hover: #eeeeff;
+$button_text: $far_background_purple;
+
+$panel_background: #777788;
+$foreground_white: #ffffff;
+$sudoku_background: $far_background_purple;
 
 .activeSquare {
-    background-color: #aabbaa;
+    background-color: $active_square
 }
 
 .defaultFilledSquare {
-    background-color: #ccccdd;
+    background-color: $darker_blue;
 }
 
 .sudokuSection button {
@@ -16,7 +43,12 @@ $sudoku_background: #444455;
 }
 
 .sudokuSquare.inactiveSquare, .noteSquare.inactiveSquare {
-    background-color: #ffffff;
+    background-color: $foreground_white;
+}
+
+button {
+    border: 1px solid $button_border;
+    border-radius: 10px;
 }
 
 .buttonGrid {
@@ -24,34 +56,30 @@ $sudoku_background: #444455;
     margin-right: 1em;
 
     button {
-        border: 1px solid #000011;
-        border-radius: 10px;
+        background-color: $button_inactive;
         font-size: 24px;
         height: 1.5 * $cell_size;
         width: 1.5 * $cell_size;
         margin: 0;
         padding: 0;
+
+        &:hover {
+            background-color: $button_inactive_hover;
+        }
     }
 
     .activeNumpadButton {
-        background-color: #ccccdd;
-    }
-}
+        background-color: $button_active;
+        color: $button_inactive_hover;
 
-.sudokuChecker button {
-    background-color: #555577;
-    border: 1px solid #000000;
-    border-radius: 10px;
-    color: #ddddff;
-    padding: 1em;
-
-    &:hover {
-        background-color: #666688;
+        &:hover {
+            color: $sudoku_background;
+        }
     }
 }
 
 .sudokuSection button:focus {
-    outline: 2px dotted #000011;
+    outline: 2px dotted $button_border;
 }
 
 .modeSelect {
@@ -64,30 +92,34 @@ $sudoku_background: #444455;
     display: none;
 }
 
-.modeSelect label {
-    background-color: #ffffff;
-    border: 1px solid #000000;
+.modeSelect label, .sudokuChecker button {
+    background-color: $button_inactive;
+    border: 1px solid $button_border;
     border-radius: 10px;
+    color: $button_border;
     cursor: pointer;
-    float: left;
-    margin: 10px;
     padding: 1em;
     text-align: center;
     vertical-align: middle;
+    margin: 10px;
     width: 10em;
 
     &:hover {
-        background-color: #ddddff;
+        background-color: $button_inactive_hover;
     }
 }
 
+.modeSelect label {
+    float: left;
+}
+
 .modeSelect input[type="radio"]:checked+label {
-    background-color: #555577;
+    background-color: $button_active;
     color: #ddddff;
     font-weight: bold;
 
     &:hover {
-        background-color: #666688;
+        background-color: $button_active_hover;
     }
 }
 
@@ -95,11 +127,23 @@ $sudoku_background: #444455;
     display: flex;
 }
 
+.sudokuInput, .sudokuChecker {
+    background-color: $panel_background;
+}
+
 .sudokuGrid {
     background-color: $sudoku_background;
     flex-direction: column;
     list-style: none;
     padding: 2em;
+
+    button {
+        border-radius: 0;
+
+        &:hover {
+            background-color: $hover_square;
+        }
+    }
 
     ul {
         list-style: none;
@@ -498,10 +542,10 @@ $sudoku_background: #444455;
 
 .sudokuSection {
     align-items: center;
-    background-color: #9999aa;
+    background-color: $lightest_foreground;
     display: flex;
-    justify-content: space-around;
-    min-height: 500px;
+    justify-content: center;
+    min-height: 100%;
     min-width: 1000px;
 }
 
@@ -532,7 +576,7 @@ $sudoku_background: #444455;
 }
 
 .activeNote {
-    color: #000011;
+    color: $button_border;
 }
 
 .sudokuSquare, .defaultFilledSquare, .noteSquare {
@@ -570,7 +614,6 @@ $sudoku_background: #444455;
 
 .sudokuChecker, .sudokuInput {
     align-items: center;
-    background-color: #ddddff;
     flex-direction: column;
     height: 30em;
     justify-content: space-around;
