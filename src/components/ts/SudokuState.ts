@@ -44,13 +44,13 @@ export default class SudokuState extends Vue {
     // callbacks for subcomponents.
     // initialized in the proper subcomponent.
     // SudokuGrid.
-    public handleGridUpdate: (value: number) => SudokuSquare|null = () => new SudokuSquare();
+    public handleGridUpdate: (value: number) => void = this.errorVoid;
     public onBoardClick: (row: number, col: number) => void = this.errorVoid;
     public getGridSection: (section_type: string, index: number) => number[] = () => {return []};
     public invalidateSection: (section_type: string, index: number) => void = this.errorVoid;
     public hasEmptySquares: () => boolean = () => {return false};
     public getDigitsToToggle: (row: number, col: number) => number[] = () => {return []};
-    public setSquareGuessModes: () => void = this.errorVoid;
+    public setSquareGuessModes: (isGuessMode: boolean) => void = this.errorVoid;
 
     // SudokuChecker calls these, but all the necessary data is in SudokuGrid.
     // so they live there.

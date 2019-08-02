@@ -69,13 +69,8 @@ export default class SudokuGrid extends Vue {
     public getRowClass(row: number): string[] {
         let classes = ["sudokuRow"];
 
-        // I hardcode numbers here (and in other places) because generalizing a sudoku
-        // seems like more work than I want to do now.
-        // it isn't just a "well make the width variable" thing because the grid size has to be a
-        // number with an integer square root so the subgrids work,
-        // and then you have to change the digit entry, and figure out how to put in two-digit
-        // numbers, and it just seems like a bit much.
-        if (row >= 0 && row < 8) {
+        let length = this.state.minigridSize * this.state.minigridSize;
+        if (row >= 0 && row < (length-1)) {
             if ((row+1) % this.state.minigridSize == 0) {
                 classes.push("spacerRow");
             } else {
@@ -166,24 +161,21 @@ export default class SudokuGrid extends Vue {
 
     // parameters:
     // value: value to update on square.
-    // returns: cell referred to by current activeRow/activeCol coordinates.
+    // returns: none.
     // result: specified cell has its guess or notes updated as appropriate.
-    public handleGridUpdate(value: number): SudokuSquare|null {
+    public handleGridUpdate(value: number): void {
         let activeCell = this.state.activeGridSquare;
-
         if (activeCell) {
             activeCell.updateValues(this.state.isGuessMode, value);
 
-            let newRow = this.squareData[activeCell.row];
-            newRow[activeCell.column] = activeCell;
+            let row = this.squareData[activeCell.row];
+            row[activeCell.column] = activeCell;
             Vue.set(
                 this.squareData,
                 activeCell.row,
-                newRow
-            )
+                row,
+            );
         }
-
-        return activeCell;
     }
 
     // parameters:
@@ -223,7 +215,6 @@ export default class SudokuGrid extends Vue {
             // unsupported type!
         }
 
-
         return coords;
     }
 
@@ -250,34 +241,27 @@ export default class SudokuGrid extends Vue {
     // result: classes in section switched to proper error classes.
     public invalidateSection(section_type: string, index: number): void {
         let length = this.state.minigridSize * this.state.minigridSize;
+        let coords = this.getCoordinates(section_type, index);
+        let states: string[] = [];
 
         // TODO is this easier with coords or equivalent?
-        let row = this.squareData[index];
         if (section_type === SudokuState.SectionType.Row) {
-            row[0].appendToErrorState(SudokuSquare.ErrorStates.LeftRow);
+            states.push(SudokuSquare.ErrorStates.LeftRow);
             for (let i = 1; i < length-1; i++) {
-                row[i].appendToErrorState(SudokuSquare.ErrorStates.CenterRow);
+                states.push(SudokuSquare.ErrorStates.CenterRow);
             }
-            row[length-1].appendToErrorState(SudokuSquare.ErrorStates.RightRow);
+            states.push(SudokuSquare.ErrorStates.RightRow);
 
         } else if (section_type === SudokuState.SectionType.Column) {
-            let square = this.squareData[0][index];
-
-            square.appendToErrorState(SudokuSquare.ErrorStates.TopColumn);
-            // it's not obvious to me how to be more efficient here,
-            // because I need to touch every row.
-
+            states.push(SudokuSquare.ErrorStates.TopColumn);
             for (let i = 1; i < length-1; i++) {
-                square = this.squareData[i][index];
-                square.appendToErrorState(SudokuSquare.ErrorStates.MiddleColumn);
+                states.push(SudokuSquare.ErrorStates.MiddleColumn);
             }
-            square = this.squareData[length-1][index];
-            square.appendToErrorState(SudokuSquare.ErrorStates.BottomColumn);
+            states.push(SudokuSquare.ErrorStates.BottomColumn);
 
         } else if (section_type === SudokuState.SectionType.Subgrid) {
             // unsure how to do this in a less ugly way.
-            let coords = this.getCoordinates(section_type, index);
-            let stateOrder: string[] = [
+            states = [
                 SudokuSquare.ErrorStates.TopLeftSubgrid,
                 SudokuSquare.ErrorStates.TopCenterSubgrid,
                 SudokuSquare.ErrorStates.TopRightSubgrid,
@@ -291,14 +275,21 @@ export default class SudokuGrid extends Vue {
                 SudokuSquare.ErrorStates.BottomRightSubgrid,
             ];
 
-            for (let i = 0; i < coords.length; i++) {
-                let coord = coords[i];
-                let state = stateOrder[i];
-                this.squareData[coord[0]][coord[1]].appendToErrorState(state);
-            }
-
         } else {
             //unsupported!
+        }
+
+        for (let i = 0; i < coords.length; i++) {
+            let [row, col] = coords[i];
+            let state = states[i];
+            this.squareData[row][col].appendToErrorState(state);
+            let squareRow = this.squareData[row];
+
+            Vue.set(
+                this.squareData,
+                row,
+                squareRow,
+            );
         }
     }
 
@@ -306,19 +297,10 @@ export default class SudokuGrid extends Vue {
     // returns: none.
     // result: reset errors on board.
     public resetBoardErrors(): void {
-
         // reset squares.
-        for (let r = 0; r < this.squareData.length; r++) {
-
-            for (let c = 0; c < this.squareData[r].length; c++) {
-                let square = this.squareData[r][c];
-                square.resetErrorState();
-
-                Vue.set(
-                    this.squareData[r],
-                    c,
-                    square,
-                );
+        for (let row of this.squareData) {
+            for (let square of row) {
+                square.resetErrorState()
             }
         }
 
@@ -332,28 +314,23 @@ export default class SudokuGrid extends Vue {
     // results: clear all square guesses/notes.
     public resetBoard(): void {
         this.state.resetBoardErrors();
-        for (let r = 0; r < this.squareData.length; r++) {
 
-            for (let c = 0; c < this.squareData[r].length; c++) {
-                let square = this.squareData[r][c];
+        for (let row of this.squareData) {
+            for (let square of row) {
                 square.clearUserValues();
-
-                Vue.set(
-                    this.squareData[r],
-                    c,
-                    square,
-                );
             }
         }
+
+        this.state.clearNumpadSquares();
     }
 
     // parameters: none.
     // returns: are there unguessed squares on the board?
     // results: none.
     public hasEmptySquares(): boolean {
-        for (let r = 0; r < this.squareData.length; r++) {
-            for (let c = 0; c < this.squareData[r].length; c++) {
-                if (this.squareData[r][c].guess === null) {
+        for (let row of this.squareData) {
+            for (let square of row) {
+                if (square.guess === null) {
                     return true;
                 }
             }
@@ -362,22 +339,33 @@ export default class SudokuGrid extends Vue {
         return false;
     }
 
-    // parameters: none>
+    // parameters:
+    // isGuessMode: state-level guess mode.
     // returns: none.
     // results: set guess mode on all squares.
-    public setSquareGuessModes(): void {
-        for (let r = 0; r < this.squareData.length; r++) {
-
-            let newRow = this.squareData[r];
-            for (let c = 0; c < newRow.length; c++) {
-                newRow[c].setGuessMode(this.state.isGuessMode);
-            }
+    public setSquareGuessModes(isGuessMode:boolean): void {
+        this.squareData.forEach( (row, r) => {
+            row.forEach( (square, _) => {
+                square.setGuessMode(isGuessMode);
+            });
 
             Vue.set(
                 this.squareData,
                 r,
-                newRow,
+                row,
             );
+        });
+
+        if (this.state.activeGridSquare) {
+            this.state.activeGridSquare.setGuessMode(isGuessMode);
+            let square = this.state.activeGridSquare;
+            let r = square.row;
+            let c = square.column;
+            Vue.set(
+                this.state,
+                "activeGridSquare",
+                this.squareData[r][c],
+            )
         }
     }
 }

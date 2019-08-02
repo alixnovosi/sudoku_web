@@ -26,7 +26,7 @@ button, label {
   margin-right: 1em;
 }
 .buttonGrid button {
-  background-color: #ccccdd;
+  background-color: #bbbbcc;
   font-size: 24px;
   height: 60px;
   width: 60px;
@@ -41,7 +41,7 @@ button, label {
   color: #eeeeff;
 }
 .buttonGrid .activeNumpadButton:hover {
-  color: #444455;
+  background-color: #888899;
 }
 
 .sudokuSection button:focus {
@@ -59,7 +59,7 @@ button, label {
 }
 
 .modeSelect label, .sudokuChecker button {
-  background-color: #ccccdd;
+  background-color: #bbbbcc;
   border: 1px solid #000011;
   border-radius: 10px;
   color: #000011;

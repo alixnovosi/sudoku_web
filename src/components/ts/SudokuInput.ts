@@ -31,14 +31,13 @@ export default class SudokuInput extends Vue {
     public updateGuessMode() {
         this.state.isGuessMode = (this.state.guessMode === "true");
 
-        if (this.state.activeGridSquare) {
-            this.state.onBoardClick(
-                this.state.activeGridSquare.row,
-                this.state.activeGridSquare.column,
-            );
-        }
+        console.log("yo");
 
-        this.state.setSquareGuessModes();
+        this.state.setSquareGuessModes(this.state.isGuessMode);
+
+        if (this.state.activeGridSquare) {
+            console.log(this.state.activeGridSquare.isGuessMode);
+        }
 
         this.state.loadNumpadValues();
     };
@@ -95,41 +94,22 @@ export default class SudokuInput extends Vue {
 
         // only need to erase old button if we are in guessMode.
         // and if it's valid.
-        if (this.state.isGuessMode) {
-            if (this.state.activeNumpadSquare) {
-                let oldActiveRow = this.state.activeNumpadSquare.row;
-                let oldActiveCol = this.state.activeNumpadSquare.column;
-                let oldActiveNumpad = this.numpadButtons[oldActiveRow][oldActiveCol];
-                // erase old numpad before setting class on new one.
-                // check that oldActiveNumpad is valid and that both coordinates aren't the same as the
-                // current coords
-                // (which would mean we're clicking the same button over and over,
-                // and don't need to reset like this).
-                if (oldActiveNumpad && (oldActiveRow !== row || oldActiveCol !== col)) {
-                    oldActiveNumpad.isActive = false;
-                }
-            }
+        if (this.state.isGuessMode && this.state.activeNumpadSquare) {
+            // erase old numpad before setting class on new one.
+            this.state.activeNumpadSquare.isActive = false;
         }
 
+        // update active square.
         this.state.activeNumpadSquare = this.numpadButtons[row][col];
 
-        let activeGridSquare = this.state.handleGridUpdate(value);
-
+        this.state.handleGridUpdate(value);
+        let activeGridSquare = this.state.activeGridSquare;
         // only work with actual cell changes.
         if (activeGridSquare) {
-            let numpadButton = this.numpadButtons[row][col];
-            numpadButton.updateIsActive(
+            this.numpadButtons[row][col].updateIsActive(
                 this.state.isGuessMode,
                 activeGridSquare.guess,
                 activeGridSquare.notes,
-            );
-
-            let numpadRow = this.numpadButtons[row]
-            numpadRow[col] = numpadButton;
-            Vue.set(
-                this.numpadButtons,
-                row,
-                numpadRow,
             );
 
             // request error clears on any button change in guess mode.
@@ -145,17 +125,7 @@ export default class SudokuInput extends Vue {
     // result: all numpad squares set to inactive.
     public clearNumpadSquares() {
         for (let [row, col] of this.allNumpadCoords) {
-            let oldActiveNumpad = this.numpadButtons[row][col];
-            oldActiveNumpad.isActive = false;
-
-            let numpadRow = this.numpadButtons[row];
-            numpadRow[col] = oldActiveNumpad;
-
-            Vue.set(
-                this.numpadButtons,
-                row,
-                numpadRow,
-            );
+            this.numpadButtons[row][col].isActive = false;
         }
     }
 
@@ -170,16 +140,7 @@ export default class SudokuInput extends Vue {
             let row = Math.floor((digit-1) / this.state.minigridSize);
             let col = (digit-1) % this.state.minigridSize;
 
-            let numpadButton = this.numpadButtons[row][col];
-            numpadButton.isActive = true;
-
-            let numpadRow = this.numpadButtons[row];
-            numpadRow[col] = numpadButton;
-            Vue.set(
-                this.numpadButtons,
-                row,
-                numpadRow,
-            );
+            this.numpadButtons[row][col].isActive = true;
         };
     }
 
@@ -192,6 +153,7 @@ export default class SudokuInput extends Vue {
             return;
         }
 
+        // clear, figure out which digits to set from active square, set digits.
         this.state.clearNumpadSquares();
 
         let activeGridSquare = this.state.activeGridSquare;

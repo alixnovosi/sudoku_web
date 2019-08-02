@@ -20,7 +20,7 @@ $hover_square: $lighter_green;
 $button_border: $darkest_blue_black;
 $button_active: $far_background_purple;
 $button_active_hover: #888899;
-$button_inactive: #ccccdd;
+$button_inactive: #bbbbcc;
 $button_inactive_hover: #eeeeff;
 $button_text: $far_background_purple;
 
@@ -73,7 +73,7 @@ button, label {
         color: $button_inactive_hover;
 
         &:hover {
-            color: $sudoku_background;
+            background-color: $button_active_hover;
         }
     }
 }
