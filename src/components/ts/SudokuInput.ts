@@ -30,15 +30,7 @@ export default class SudokuInput extends Vue {
     @Watch("state.guessMode")
     public updateGuessMode() {
         this.state.isGuessMode = (this.state.guessMode === "true");
-
-        console.log("yo");
-
         this.state.setSquareGuessModes(this.state.isGuessMode);
-
-        if (this.state.activeGridSquare) {
-            console.log(this.state.activeGridSquare.isGuessMode);
-        }
-
         this.state.loadNumpadValues();
     };
 

@@ -47,8 +47,8 @@ $sudoku_background: $far_background_purple;
 }
 
 button, label {
-    border: 1px solid $button_border;
     border-radius: 10px;
+    border: 1px solid $button_border;
 }
 
 .buttonGrid {
@@ -129,10 +129,12 @@ button, label {
 
 .sudokuInput, .sudokuChecker {
     background-color: $panel_background;
+    border: 1px solid $button_border;
 }
 
 .sudokuGrid {
     background-color: $sudoku_background;
+    border: 1px solid $button_border;
     flex-direction: column;
     flex-grow: 2;
     list-style: none;
