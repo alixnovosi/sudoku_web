@@ -136,7 +136,6 @@ button, label {
     background-color: $sudoku_background;
     border: 1px solid $button_border;
     flex-direction: column;
-    flex-grow: 2;
     list-style: none;
     padding: 1em;
 
@@ -617,12 +616,12 @@ button, label {
 
 .sudokuGrid, .sudokuInput, .sudokuChecker {
     border-radius: 10px;
+    flex: 0 1 auto;
 }
 
 .sudokuChecker, .sudokuInput {
     align-items: center;
     flex-direction: column;
-    flex-grow: 1;
     height: 30em;
     justify-content: space-around;
     margin: 1em;
