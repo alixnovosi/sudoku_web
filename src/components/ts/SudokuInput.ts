@@ -68,6 +68,9 @@ export default class SudokuInput extends Vue {
         this.state.enableNumpadSquares = this.enableNumpadSquares;
         this.state.onNumpadClick = this.onNumpadClick;
         this.state.loadNumpadValues= this.loadNumpadValues;
+
+        // keyboard input.
+        window.addEventListener("keydown", this.processKeyboardEvent);
     }
 
     // METHODS
@@ -102,6 +105,12 @@ export default class SudokuInput extends Vue {
                 this.state.isGuessMode,
                 activeGridSquare.guess,
                 activeGridSquare.notes,
+            );
+
+            Vue.set(
+                this.numpadButtons,
+                row,
+                this.numpadButtons[row],
             );
 
             // request error clears on any button change in guess mode.
@@ -153,5 +162,22 @@ export default class SudokuInput extends Vue {
         let digits = this.state.getDigitsToToggle(activeGridSquare.row, activeGridSquare.column);
 
         this.state.enableNumpadSquares(digits);
+    }
+
+    // parameters:
+    // event: keyboard event to process.
+    // returns: none
+    // result: enter digit or select square.
+    public processKeyboardEvent(event: any) {
+        const key = event.key;
+
+        // square value inputs.
+        let maybeNum = Number(key);
+        if (key && maybeNum && maybeNum >= 1 && maybeNum <= 9) {
+            let row = Math.floor((maybeNum-1) / this.state.minigridSize);
+            let col = (maybeNum-1) % this.state.minigridSize;
+
+            this.state.onNumpadClick(maybeNum, row, col);
+        }
     }
 }
