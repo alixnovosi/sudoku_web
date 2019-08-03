@@ -169,7 +169,7 @@ export default class SudokuInput extends Vue {
     // returns: none
     // result: enter digit or select square.
     public processKeyboardEvent(event: any) {
-        const key = event.key;
+        const key: string = event.key;
 
         // square value inputs.
         let maybeNum = Number(key);
@@ -178,6 +178,13 @@ export default class SudokuInput extends Vue {
             let col = (maybeNum-1) % this.state.minigridSize;
 
             this.state.onNumpadClick(maybeNum, row, col);
+            return;
+        }
+
+        // let grid handle its own navigation.
+        let maybeArrow: string = key.slice(0, 5);
+        if (maybeArrow === "Arrow") {
+            this.state.handleBoardNavigate(key);
         }
     }
 }

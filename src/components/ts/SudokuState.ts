@@ -51,6 +51,7 @@ export default class SudokuState extends Vue {
     public hasEmptySquares: () => boolean = () => {return false};
     public getDigitsToToggle: (row: number, col: number) => number[] = () => {return []};
     public setSquareGuessModes: (isGuessMode: boolean) => void = this.errorVoid;
+    public handleBoardNavigate: (arrowEvent: string) => void = this.errorVoid;
 
     // SudokuChecker calls these, but all the necessary data is in SudokuGrid.
     // so they live there.

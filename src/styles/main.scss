@@ -145,6 +145,10 @@ button, label {
         &:hover {
             background-color: $hover_square;
         }
+
+        &:focus {
+            outline: 3px dotted $button_inactive;
+        }
     }
 
     ul {

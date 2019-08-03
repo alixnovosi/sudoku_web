@@ -13,6 +13,14 @@ import WithRender from "../html/SudokuGrid.html";
     }
 })
 export default class SudokuGrid extends Vue {
+    // statics
+    static readonly ArrowType = Object.freeze({
+        ArrowUp: "ArrowUp",
+        ArrowDown: "ArrowDown",
+        ArrowLeft: "ArrowLeft",
+        ArrowRight: "ArrowRight",
+    });
+
     // PROPS AND DATA MEMBERS
     @Prop()
     initialSquareData!: {value: number, hint: boolean}[][];
@@ -54,6 +62,7 @@ export default class SudokuGrid extends Vue {
         this.state.invalidateSection = this.invalidateSection;
         this.state.hasEmptySquares = this.hasEmptySquares;
         this.state.getDigitsToToggle = this.getDigitsToToggle;
+        this.state.handleBoardNavigate = this.handleBoardNavigate;
 
         this.state.resetBoardErrors = this.resetBoardErrors;
         this.state.resetBoard = this.resetBoard;
@@ -359,13 +368,69 @@ export default class SudokuGrid extends Vue {
         if (this.state.activeGridSquare) {
             this.state.activeGridSquare.setGuessMode(isGuessMode);
             let square = this.state.activeGridSquare;
-            let r = square.row;
-            let c = square.column;
             Vue.set(
                 this.state,
                 "activeGridSquare",
-                this.squareData[r][c],
+                this.squareData[square.row][square.column],
             )
         }
+    }
+
+    public handleBoardNavigate(keyboardEvent: string) {
+        if (!this.state.activeGridSquare) {
+            return;
+        }
+
+        let vDiff: number = 0;
+        let hDiff: number = 0;
+        if (keyboardEvent === SudokuGrid.ArrowType.ArrowUp) {
+            vDiff = -1;
+        } else if (keyboardEvent === SudokuGrid.ArrowType.ArrowDown) {
+            vDiff = 1;
+        } else if (keyboardEvent === SudokuGrid.ArrowType.ArrowLeft) {
+            hDiff = -1;
+        } else {
+            hDiff = 1;
+        }
+
+        // stay in bounds.
+        let attemptedRow = this.boundRow(this.state.activeGridSquare.row + vDiff);
+        let attemptedCol = this.boundColumn(this.state.activeGridSquare.column + hDiff);
+
+        // keep moving until we find a non-hint square.
+        let square = this.squareData[attemptedRow][attemptedCol];
+        while (square.isHint) {
+            attemptedRow = this.boundRow(attemptedRow + vDiff);
+            attemptedCol = this.boundColumn(attemptedCol + hDiff);
+            square = this.squareData[attemptedRow][attemptedCol];
+        }
+
+        // "click" that square.
+        this.state.onBoardClick(attemptedRow, attemptedCol);
+    }
+
+    // parameters:
+    // proposedRow: an index for a row, to be wrapped into the board.
+    // returns: wrap around as needed to keep the row in bounds.
+    // result: none.
+    public boundRow(proposedRow: number) {
+        if (proposedRow < 0) {
+            return proposedRow + this.squareData.length;
+        }
+
+        return proposedRow % this.squareData.length;
+    }
+
+    // parameters:
+    // proposedCol: an index for a column, to be wrapped into the board.
+    // returns: wrap around as needed to keep the column in bounds.
+    // result: none.
+    public boundColumn(proposedColumn: number) {
+        if (proposedColumn < 0) {
+            return proposedColumn + this.squareData.length;
+        }
+
+        return proposedColumn % this.squareData.length;
+
     }
 }
