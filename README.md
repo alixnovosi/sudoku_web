@@ -10,14 +10,15 @@ and you can make your own by studying encoder.js.
 
 Install dev dependencies with yarn or node,
 run a webpack-dev-server with `yarn dev` or `npm run dev`,
-and then append ?board=<BOARD CODE> to the loaded page.
+and then append `?board=<BOARD CODE>` to the loaded page.
 
 Default board code (used if none supplied):
-bmogifrjbdlstgedmrpphncjloigelidmjfgrgdreifbmjtpcbhgnoirgofdmstbncbjgshpesjprloqdc
+`bmogifrjbdlstgedmrpphncjloigelidmjfgrgdreifbmjtpcbhgnoirgofdmstbncbjgshpesjprloqdc`
 
 Other codes:
-bedfmqjrilqscfrbotnlthidopgcsmgljfdohdhoqimtbfjpbhengmsfbtncgirocoijphbnqrgnelscfj
 
-bimhbfonjgtgfdmhbesdebqithpcfjdegichlermpbnqsjqbijhcedfhsgmdpjbelfehtgicncdtsebfqh
+`bedfmqjrilqscfrbotnlthidopgcsmgljfdohdhoqimtbfjpbhengmsfbtncgirocoijphbnqrgnelscfj`
 
-bjmfgnbiohqbifhecjndhojicpgbhejscqbdfsfceldjhqbgdrjpeiccirdfjqbeojbcghdfsfngboihmj
+`bimhbfonjgtgfdmhbesdebqithpcfjdegichlermpbnqsjqbijhcedfhsgmdpjbelfehtgicncdtsebfqh`
+
+`bjmfgnbiohqbifhecjndhojicpgbhejscqbdfsfceldjhqbgdrjpeiccirdfjqbeojbcghdfsfngboihmj`
