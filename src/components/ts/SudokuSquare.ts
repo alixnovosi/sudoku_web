@@ -47,8 +47,7 @@ export default class SudokuSquare extends Vue {
     @Prop()
     public minigridSize!: number;
 
-    @Prop()
-    public isGuessMode!: boolean;
+    public isGuessMode: boolean = true;
 
     public get classes(): string[] {
         let classes: string[] = [];

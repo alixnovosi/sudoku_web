@@ -3,17 +3,23 @@
     "version": "1.0.0",
     "description": "web sudoku player",
     "main": "index.ts",
+    "browserslist": "> 0.25%, not dead",
     "dependencies": {
-        "vue": "^2.6.10",
-        "vue-class-component": "^7.1.0",
-        "vue-property-decorator": "^8.2.1"
+        "vue": "^2.6.10"
     },
     "devDependencies": {
+        "@babel/core": "^7.5.5",
+        "@babel/plugin-proposal-class-properties": "^7.5.5",
+        "@babel/plugin-proposal-decorators": "^7.4.4",
+        "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+        "@babel/preset-env": "^7.5.5",
+        "@babel/preset-typescript": "^7.3.3",
         "@types/mini-css-extract-plugin": "^0.8.0",
         "@types/node": "^12.6.8",
         "@types/sass": "^1.16.0",
         "@types/webpack": "^4.32.1",
         "@types/webpack-dev-server": "^3.1.7",
+        "babel-loader": "^8.0.6",
         "css-loader": "^3.1.0",
         "mini-css-extract-plugin": "^0.8.0",
         "sass": "^1.22.9",
@@ -24,9 +30,10 @@
         "tsconfig-paths": "^3.8.0",
         "typescript": "^3.5.3",
         "vue-loader": "^15.7.1",
+        "vue-property-decorator": "^8.2.1",
         "vue-template-compiler": "^2.6.10",
         "vue-template-loader": "^1.0.0",
-        "webpack": "^4.38.0",
+        "webpack": "^4.39.1",
         "webpack-cli": "^3.3.6",
         "webpack-dev-server": "^3.7.2"
     },

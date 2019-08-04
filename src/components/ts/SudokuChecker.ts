@@ -6,9 +6,7 @@ import SudokuState from "./SudokuState";
 import WithRender from "../html/SudokuChecker.html";
 
 @WithRender
-@Component({
-
-})
+@Component({ })
 export default class SudokuChecker extends Vue {
     // PROPS AND DATA MEMBERS.
 
@@ -51,12 +49,11 @@ export default class SudokuChecker extends Vue {
             }
         }
 
-        if (!boardIsValid) {
-            this.state.isInError = true;
-
-        } else {
+        if (boardIsValid) {
             this.state.isInError = false;
         }
+
+        this.state.isInError = true;
     }
 
     public submit(): void {

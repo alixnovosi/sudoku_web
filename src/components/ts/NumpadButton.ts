@@ -18,9 +18,9 @@ export default class NumpadButton extends Vue {
     public get classes(): string[] {
         if (this.isActive) {
             return ["activeNumpadButton"];
-        } else {
-            return [];
         }
+
+        return [];
     }
 
     public updateIsActive(isSolveMode: boolean, cellGuess?: number|null, cellNotes?: boolean[][]) {

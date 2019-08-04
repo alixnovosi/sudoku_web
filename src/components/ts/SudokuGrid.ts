@@ -36,18 +36,14 @@ export default class SudokuGrid extends Vue {
 
             let newRow: SudokuSquare[] = [];
             for (let c = 0; c < this.initialSquareData[r].length; c++) {
-                let value = this.initialSquareData[r][c].value;
-                let hint = this.initialSquareData[r][c].hint;
                 newRow.push(
                     new SudokuSquare({
                         propsData: {
-                            value: value,
-                            isHint: hint,
+                            value: this.initialSquareData[r][c].value,
+                            isHint: this.initialSquareData[r][c].hint,
                             minigridSize: this.state.minigridSize,
-                            isGuessMode: this.state.isGuessMode,
                             row: r,
                             column: c,
-                            id: (r * this.state.minigridSize) + c + 1,
                         }
                     })
                 );

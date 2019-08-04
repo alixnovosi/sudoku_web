@@ -30,5 +30,5 @@ export default class SudokuGame extends Vue {
         },
     });
 
-    mounted() { }
+    public el: string = "#app";
 }

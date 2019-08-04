@@ -28,10 +28,29 @@ const config: webpack.Configuration = {
                 options: { },
             },
             {
-                test: /\.tsx?$/,
-                loader: "ts-loader",
+                test: /\.(js|jsx|tsx|ts)$/,
                 exclude: /node_modules/,
-                options: { },
+                use: [
+                    {
+                        loader: "babel-loader",
+                        options: {
+                            presets: [
+                                "@babel/preset-env",
+                                "@babel/preset-typescript",
+                            ],
+                            plugins: [
+                                [
+                                    "@babel/plugin-proposal-decorators",
+                                    {legacy: true},
+                                ],
+                                [
+                                    "@babel/proposal-class-properties",
+                                    {loose: true},
+                                ],
+                            ],
+                        },
+                    },
+                ],
             },
 
             // https://github.com/webpack-contrib/mini-css-extract-plugin#advanced-configuration-example
@@ -54,6 +73,7 @@ const config: webpack.Configuration = {
                     {
                         loader: "sass-loader",
                         options: {
+                            outputStyle: "compressed",
                             sourceMap: true,
                             implementation: sass,
                         },
@@ -88,7 +108,7 @@ const config: webpack.Configuration = {
     output: {
         path: path.resolve(__dirname, "./dist"),
         publicPath: "/dist/",
-        filename: "build.js"
+        filename: "bundle.js"
     },
     plugins: [
         // make sure to include the plugin for the magic
@@ -111,16 +131,6 @@ if (!devMode) {
         new webpack.DefinePlugin({
             "process.env": {
                 NODE_ENV: "production",
-            }
-        }),
-        new webpack.optimize.UglifyJsPlugin({
-            parallel: {
-                cache: true,
-                workers: 3,
-            },
-            sourceMap: true,
-            compress: {
-                warnings: false,
             }
         }),
         new webpack.LoaderOptionsPlugin({

@@ -1,29 +1,21 @@
-import Vue from "vue";
-
-// import { Encoder } from "./encoder";
-import { Encoder } from "./encoder";
 import { Decoder } from "./decoder";
 import SudokuGame from "./components/ts/SudokuGame";
 
+// for auto-loading, I think? maybe?
 import "./styles/main.scss";
 
-let encoder = new Encoder();
+let urlSearchParams = new URLSearchParams();
+let boardCode = urlSearchParams.get("board");
+
+console.log(`board code is ${boardCode}`);
+
 let decoder = new Decoder();
 
-let encoded = encoder.encode();
-let sd = decoder.decode(encoded);
+let sd = decoder.decode(boardCode);
 
-new Vue({
-    data: {
-        squareData: sd,
-    },
-    el: "#app",
-    template: `
-    <div id="app">
-      <sudoku-game :initialSquareData="squareData"></sudoku-game>
-    </div>
-    `,
-    components: {
-        SudokuGame
+let sudokuGame = new SudokuGame({
+    propsData: {
+        initialSquareData: sd,
     }
-}).$mount("#app");
+});
+sudokuGame.$mount("#app");
