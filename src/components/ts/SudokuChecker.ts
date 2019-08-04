@@ -49,11 +49,12 @@ export default class SudokuChecker extends Vue {
             }
         }
 
-        if (boardIsValid) {
+        if (!boardIsValid) {
+            this.state.isInError = true;
+
+        } else {
             this.state.isInError = false;
         }
-
-        this.state.isInError = true;
     }
 
     public submit(): void {

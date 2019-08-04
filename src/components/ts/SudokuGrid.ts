@@ -335,7 +335,7 @@ export default class SudokuGrid extends Vue {
     public hasEmptySquares(): boolean {
         for (let row of this.squareData) {
             for (let square of row) {
-                if (square.guess === null) {
+                if (!square.isHint && square.guess === null) {
                     return true;
                 }
             }

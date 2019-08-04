@@ -18,7 +18,7 @@ export default class SudokuState extends Vue {
         None: null,
         Invalid: "Board Invalid",
         Incomplete: "Board Incomplete",
-        Valid: "Board Valid: you win!!",
+        Valid: "You win!!!!!",
     });
 
     @Prop()

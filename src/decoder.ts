@@ -7,11 +7,9 @@ export class Decoder {
     public decode(encodedData: string|null): SquareData[][]|null {
         // default the encoded data.
         if (!encodedData || encodedData === "") {
-            console.log(`had to default data`);
             encodedData = Decoder.defaultData;
         }
 
-        console.log(`encoded data ${encodedData}`);
         let encodingVersion = encodedData[0].charCodeAt(0) - 97;
 
         if (encodingVersion === 1) {
