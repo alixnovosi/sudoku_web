@@ -4,10 +4,9 @@ import SudokuGame from "./components/ts/SudokuGame";
 // for auto-loading, I think? maybe?
 import "./styles/main.scss";
 
-let urlSearchParams = new URLSearchParams();
-let boardCode = urlSearchParams.get("board");
-
-console.log(`board code is ${boardCode}`);
+let url = new URL(window.location.href);
+let params = new URLSearchParams(url.search);
+let boardCode = params.get("board");
 
 let decoder = new Decoder();
 
