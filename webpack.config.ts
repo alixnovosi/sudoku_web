@@ -1,10 +1,9 @@
 import * as path from "path";
 import * as webpack from "webpack";
-import MiniCssExtractPlugin from "mini-css-extract-plugin";
-import TerserPlugin from "terser-webpack-plugin";
 import * as sass from "sass";
 
-import { VueLoaderPlugin } from "vue-loader";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import TerserPlugin from "terser-webpack-plugin";
 
 const isProduction = process.env.NODE_ENV === "prod";
 
@@ -53,14 +52,10 @@ const config: webpack.Configuration = {
         hints: "warning",
     },
     plugins: [
-        // make sure to include the plugin for the magic
-        new VueLoaderPlugin(),
-
         new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
             filename: isProduction ? "[name].[hash].css" : "[name].css",
-            chunkFilename: "[id].css",
         }),
     ],
 
@@ -85,13 +80,12 @@ const config: webpack.Configuration = {
                     {
                         loader: "babel-loader",
                         options: {
-                            comments: false,
                             presets: [
                                 [
                                     "@babel/preset-env",
                                     {
                                         targets: {
-                                            browsers: ["> 0.25%", "not dead"],
+                                            browsers: ["> 0.25%", "not dead", "IE >= 8",],
                                         },
                                         corejs: 3,
                                         useBuiltIns: "usage",
