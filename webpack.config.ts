@@ -1,14 +1,37 @@
-import path from "path";
-import webpack from "webpack";
+import * as path from "path";
+import * as webpack from "webpack";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
-import sass from "sass";
+import TerserPlugin from "terser-webpack-plugin";
+import * as sass from "sass";
+
 import { VueLoaderPlugin } from "vue-loader";
 
 const isProduction = process.env.NODE_ENV === "prod";
 
 const config: webpack.Configuration = {
+    // documentation: https://webpack.js.org/configuration/dev-server/
+    devServer: {
+        historyApiFallback: true,
+        noInfo: true,
+        hot: true,
+    },
+    entry: "./src/index.ts",
+
+    mode: isProduction ? "production": "development",
+
     // ugly as hell.
     optimization: {
+        minimizer: [
+            new TerserPlugin({
+                include: /\.(js|jsx|tsx|ts)$/,
+                sourceMap: true,
+                terserOptions: {
+                    output: {
+                        comments: /^\**!|@preserve|@license|@cc_on/i,
+                    },
+                },
+            }),
+        ],
         splitChunks: {
             cacheGroups: {
                 styles: {
@@ -20,6 +43,34 @@ const config: webpack.Configuration = {
             },
         },
     },
+
+    output: {
+        path: path.resolve(__dirname, "./dist"),
+        publicPath: "/dist/",
+        filename: isProduction ? "[name].[hash].js" : "[name].js",
+    },
+    performance: {
+        hints: "warning",
+    },
+    plugins: [
+        // make sure to include the plugin for the magic
+        new VueLoaderPlugin(),
+
+        new MiniCssExtractPlugin({
+            // Options similar to the same options in webpackOptions.output
+            // both options are optional
+            filename: isProduction ? "[name].[hash].css" : "[name].css",
+            chunkFilename: "[id].css",
+        }),
+    ],
+
+    resolve: {
+        extensions: [".ts", ".js", ".vue", ".json"],
+        alias: {
+            "vue$": isProduction ? "vue/dist/vue.runtime.min.js" : "vue/dist/vue.runtime.esm.js",
+        }
+    },
+
     module: {
         rules: [
             {
@@ -34,8 +85,18 @@ const config: webpack.Configuration = {
                     {
                         loader: "babel-loader",
                         options: {
+                            comments: false,
                             presets: [
-                                "@babel/preset-env",
+                                [
+                                    "@babel/preset-env",
+                                    {
+                                        targets: {
+                                            browsers: ["> 0.25%", "not dead"],
+                                        },
+                                        corejs: 3,
+                                        useBuiltIns: "usage",
+                                    },
+                                ],
                                 "@babel/preset-typescript",
                             ],
                             plugins: [
@@ -67,14 +128,14 @@ const config: webpack.Configuration = {
                     {
                         loader: "css-loader",
                         options: {
-                            sourceMap: true,
+                            sourceMap: !isProduction,
                         },
                     },
                     {
                         loader: "sass-loader",
                         options: {
                             outputStyle: "compressed",
-                            sourceMap: true,
+                            sourceMap: !isProduction,
                             implementation: sass,
                         },
                     },
@@ -88,38 +149,6 @@ const config: webpack.Configuration = {
             },
         ],
     },
-    resolve: {
-        extensions: [".ts", ".js", ".vue", ".json"],
-        alias: {
-            "vue$": isProduction ? "vue/dist/vue.runtime.min.js" : "vue/dist/vue.runtime.esm.js",
-        }
-    },
-    // documentation: https://webpack.js.org/configuration/dev-server/
-    devServer: {
-        historyApiFallback: true,
-        noInfo: true,
-        hot: true,
-    },
-    performance: {
-        hints: "warning",
-    },
-    devtool: "#eval-source-map",
-    entry: "./src/index.ts",
-    output: {
-        path: path.resolve(__dirname, "./dist"),
-        publicPath: "/dist/",
-        filename: isProduction ? "[name].[hash].js" : "[name].js",
-    },
-    plugins: [
-        // make sure to include the plugin for the magic
-        new VueLoaderPlugin(),
-        new MiniCssExtractPlugin({
-            // Options similar to the same options in webpackOptions.output
-            // both options are optional
-            filename: isProduction ? "[name].[hash].css" : "[name].css",
-            chunkFilename: "[id].css",
-        }),
-    ],
 };
 
 
@@ -128,11 +157,6 @@ if (isProduction) {
     module.exports.devtool = "#source-map";
     // http://vue-loader.vuejs.org/en/workflow/production.html
     module.exports.plugins = (module.exports.plugins || []).concat([
-        new webpack.DefinePlugin({
-            "process.env": {
-                NODE_ENV: "production",
-            }
-        }),
         new webpack.LoaderOptionsPlugin({
             minimize: true,
         })
