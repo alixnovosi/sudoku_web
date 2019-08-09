@@ -35,8 +35,8 @@
         "webpack-dev-server": "^3.7.2"
     },
     "scripts": {
-        "dev": "TS_NODE_PROJECT=\"tsconfig-webpack.json\" webpack-dev-server",
-        "build": "TS_NODE_PROJECT=\"tsconfig-webpack.json\" webpack --mode production",
+        "dev": "TS_NODE_PROJECT=\"tsconfig-webpack.json\" NODE_ENV=dev webpack-dev-server",
+        "build": "TS_NODE_PROJECT=\"tsconfig-webpack.json\" NODE_ENV=prod webpack",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {

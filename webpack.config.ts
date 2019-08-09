@@ -4,7 +4,7 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import sass from "sass";
 import { VueLoaderPlugin } from "vue-loader";
 
-const devMode = process.env.NODE_ENV !== "production";
+const isProduction = process.env.NODE_ENV === "prod";
 
 const config: webpack.Configuration = {
     // ugly as hell.
@@ -61,7 +61,7 @@ const config: webpack.Configuration = {
                         loader: MiniCssExtractPlugin.loader,
                         options: {
                             publicPath: "./dist/bundle.css",
-                            hmr: devMode,
+                            hmr: !isProduction,
                         },
                     },
                     {
@@ -91,7 +91,7 @@ const config: webpack.Configuration = {
     resolve: {
         extensions: [".ts", ".js", ".vue", ".json"],
         alias: {
-            "vue$": "vue/dist/vue.esm.js",
+            "vue$": isProduction ? "vue/dist/vue.runtime.min.js" : "vue/dist/vue.runtime.esm.js",
         }
     },
     // documentation: https://webpack.js.org/configuration/dev-server/
@@ -108,7 +108,7 @@ const config: webpack.Configuration = {
     output: {
         path: path.resolve(__dirname, "./dist"),
         publicPath: "/dist/",
-        filename: "bundle.js"
+        filename: isProduction ? "[name].[hash].js" : "[name].js",
     },
     plugins: [
         // make sure to include the plugin for the magic
@@ -116,7 +116,7 @@ const config: webpack.Configuration = {
         new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
-            filename: devMode ? '[name].css' : '[name].[hash].css',
+            filename: isProduction ? "[name].[hash].css" : "[name].css",
             chunkFilename: "[id].css",
         }),
     ],
@@ -124,7 +124,7 @@ const config: webpack.Configuration = {
 
 
 export default config;
-if (!devMode) {
+if (isProduction) {
     module.exports.devtool = "#source-map";
     // http://vue-loader.vuejs.org/en/workflow/production.html
     module.exports.plugins = (module.exports.plugins || []).concat([
