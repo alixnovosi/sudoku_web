@@ -14,6 +14,9 @@ const config: webpack.Configuration = {
         noInfo: true,
         hot: true,
     },
+
+    devtool: isProduction? "source-map": "eval-source-map",
+
     entry: "./src/index.ts",
 
     mode: isProduction ? "production": "development",
@@ -148,7 +151,6 @@ const config: webpack.Configuration = {
 
 export default config;
 if (isProduction) {
-    module.exports.devtool = "#source-map";
     // http://vue-loader.vuejs.org/en/workflow/production.html
     module.exports.plugins = (module.exports.plugins || []).concat([
         new webpack.LoaderOptionsPlugin({
