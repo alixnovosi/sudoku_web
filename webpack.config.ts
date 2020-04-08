@@ -131,7 +131,9 @@ const config: webpack.Configuration = {
                     {
                         loader: "sass-loader",
                         options: {
-                            outputStyle: "compressed",
+                            sassOptions: {
+                                outputStyle: "compressed"
+                            },
                             sourceMap: !isProduction,
                             implementation: sass,
                         },
